@@ -15,8 +15,8 @@ public class GameController : MonoBehaviour
 	{
 
 		player = new PlayerController (
-			20,
-			1,
+			Pace.Normal,
+			Portion.Normal,
 			2000,
 			200,
 			200
@@ -53,6 +53,23 @@ public class GameController : MonoBehaviour
 			UpdateWorldAndPlayer ();
 		}
 	}
+
+  public string GetStatusText() {
+    string fmtString = @"Date: {0}
+    Health: {1}
+    Rations: {2}
+    Miles Travelled: {3} miles";
+    string dateString = string.Format("{0} {1}", world.currentSeason, world.day);
+    return string.Format(
+      fmtString,
+      dateString,
+      player.currentHealth,
+      player.currentRations,
+      player.distanceTravelled
+    );
+
+  }
+
 
 	void UpdateWorldAndPlayer ()
 	{

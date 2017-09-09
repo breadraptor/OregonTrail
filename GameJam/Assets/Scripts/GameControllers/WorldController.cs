@@ -22,11 +22,11 @@ public class WorldController
 	const int probabilityStep = 5;
 	int totalDistance;
 	double eventProbability;
-	Weather currentWeather;
-	Season currentSeason;
+	public Weather currentWeather {get; set;}
+	public Season currentSeason {get; set;}
 	int seasonLength = 30;
 	Random rand = new Random ();
-	int day;
+	public int day {get; set;}
 
 	public WorldController (int totalDistance, int startingProbability, Weather startingWeather, Season season, int day)
 	{
@@ -45,45 +45,11 @@ public class WorldController
       Day: {2},
       EventProbability: {3}
     ",
-			seasonToString (currentSeason),
-			weatherToString (currentWeather),
+			currentSeason,
+			currentWeather,
 			day,
 			eventProbability
 		);
-	}
-
-	private string seasonToString (Season s)
-	{
-		switch (s) {
-		case Season.Summer:
-			return "Summer";
-		case Season.Spring:
-			return "Spring";
-		case Season.Fall:
-			return "Fall";
-		case Season.Winter:
-			return "Winter";
-		default:
-			return "BROKEN";
-		}
-	}
-
-	private string weatherToString (Weather w)
-	{
-		switch (w) {
-		case Weather.Snow:
-			return "Snow";
-		case Weather.Cold:
-			return "Cold";
-		case Weather.Clear:
-			return "Clear";
-		case Weather.Raining:
-			return "Raining";
-		case Weather.Hot:
-			return "Hot";
-		default:
-			return "BROKEN";
-		}
 	}
 
 

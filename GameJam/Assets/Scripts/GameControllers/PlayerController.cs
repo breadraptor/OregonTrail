@@ -11,24 +11,47 @@ public enum Health
 	Good
 }
 
+public enum Pace {
+  Resting = 0,
+  Crawling = 5,
+  Slow = 10,
+  Normal = 20,
+  Quick = 25,
+  Strenuous = 30
+}
+
+public enum Portion {
+  Starving = 1,
+  Meager = 2,
+  Moderate = 3,
+  Normal = 4,
+  Plentiful = 5
+}
+
 public class PlayerController
 {
-	int pace;
-	int currentHunger;
-	int currentRations;
-	int currentAmmo;
-	Health currentHealth;
-	int currentScrap;
+	public Pace pace { get; set; }
+
+	public Portion currentPortion { get; set; }
+
+	public int currentRations { get; set; }
+
+	public int currentAmmo { get; set; }
+
+	public Health currentHealth { get; set; }
+
+	public int currentScrap { get; set; }
 
 	int healthNum = 100;
-	int distanceTravelled;
+
+	public int distanceTravelled;
 
 
 	// Use this for initialization
-	public PlayerController (int pace, int hunger, int rations, int ammo, int scrap)
+	public PlayerController (Pace pace, Portion portion, int rations, int ammo, int scrap)
 	{
 		this.pace = pace;
-		currentHunger = hunger;
+		currentPortion = portion;
 		currentHealth = Health.Good;
 		currentRations = rations;
 		currentAmmo = ammo;
@@ -36,37 +59,19 @@ public class PlayerController
 		distanceTravelled = 0;
 	}
 
+
 	public string toString ()
 	{
 		return string.Format (@"
       Health: {0},
 	  HealthNum: {1},
-      Hunger: {2},
+      Portion: {2},
       Rations: {3},
       DistanceTravelled: {4},
       Pace: {5},
       Ammo: {6},
       Scrap: {7}
-    ", healthToString (currentHealth), healthNum, currentHunger, currentRations, distanceTravelled, pace, currentAmmo, currentScrap);
-	}
-
-
-	private string healthToString (Health h)
-	{
-		switch (h) {
-		case Health.Good:
-			return "Good";
-		case Health.Fair:
-			return "Fair";
-		case Health.Poor:
-			return "Poor";
-		case Health.Dire:
-			return "Dire";
-		case Health.Dead:
-			return "Dead";
-		default:
-			return "BROKEN";
-		}
+    ", currentHealth, healthNum, currentPortion, currentRations, distanceTravelled, pace, currentAmmo, currentScrap);
 	}
 
 	// Update is called once per frame
@@ -79,12 +84,12 @@ public class PlayerController
 
 	private void UpdateDistanceTravelled ()
 	{
-		distanceTravelled += pace;
+		distanceTravelled += (int)pace;
 	}
 
 	private void UpdateRations ()
 	{
-		int newRations = currentRations - currentHunger;
+		int newRations = currentRations - (int) currentPortion;
 		if (newRations < 0) {
 			currentRations = 0;
 		} else {
@@ -98,10 +103,10 @@ public class PlayerController
 
 		int amountEaten;
 
-		if (currentHunger > currentRations) {
+		if ((int) currentPortion > currentRations) {
 			amountEaten = currentRations;
 		} else {
-			amountEaten = currentHunger;
+			amountEaten = (int) currentPortion;
 		}
 
 		switch (amountEaten) {
@@ -142,45 +147,28 @@ public class PlayerController
 		}
 
 		//check if pace is extra fast or extra slow
-		if (pace > 35) {
-			healthScore -= 2;
-		} else if (pace > 25) {
-			healthScore -= 1;
-		} else if (pace < 15) {
-			healthScore += 1;
-		} else if (pace < 10) {
-			healthScore += 2;
-		}
+    switch (pace) {
+      case Pace.Resting:
+        healthScore += 3;
+        break;
+      case Pace.Crawling:
+        healthScore += 2;
+        break;
+      case Pace.Slow:
+        healthScore += 1;
+        break;
+      case Pace.Quick:
+        healthScore -= 1;
+        break;
+      case Pace.Strenuous:
+        healthScore -= 2;
+        break;
 
-		//move health up or down depending on value
-//		if (healthScore > 0) {
-//			switch (currentHealth) {
-//			case Health.Fair:
-//				currentHealth = Health.Good;
-//				break;
-//			case Health.Poor:
-//				currentHealth = Health.Fair;
-//				break;
-//			case Health.Dire:
-//				currentHealth = Health.Poor;
-//				break;
-//			}
-//		} else if (healthScore < 0) {
-//			switch (currentHealth) {
-//			case Health.Good:
-//				currentHealth = Health.Fair;
-//				break;
-//			case Health.Fair:
-//				currentHealth = Health.Poor;
-//				break;
-//			case Health.Poor:
-//				currentHealth = Health.Dire;
-//				break;
-//			case Health.Dire:
-//				currentHealth = Health.Dead;
-//				break;
-//			}
-//		}
+      default:
+        //this is chill
+        break;
+    }
+
 		healthNum += healthScore;
 		if (healthNum > 100) {
 			healthNum = 100;
