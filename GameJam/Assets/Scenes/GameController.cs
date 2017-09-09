@@ -29,7 +29,6 @@ public class GameController : MonoBehaviour
 			Season.Summer,
 			0
 		);
-    StartWorldCoroutine();
 	}
 
 
