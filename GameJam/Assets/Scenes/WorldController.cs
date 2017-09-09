@@ -28,13 +28,62 @@ public class WorldController
 	Random rand = new Random ();
 	int day;
 
-	public WorldController (int totalDistance, double startingProbability, Weather startingWeather, Season season, int day)
+	public WorldController (int totalDistance, int startingProbability, Weather startingWeather, Season season, int day)
 	{
 		eventProbability = startingProbability;
 		currentWeather = startingWeather;
 		this.totalDistance = totalDistance;
-		day = day;
+		this.day = day;
 		currentSeason = season;
+	}
+
+	public string toString ()
+	{
+		return string.Format (@"
+      Season: {0},
+      Weather: {1},
+      Day: {2},
+      EventProbability: {3}
+    ",
+			seasonToString (currentSeason),
+			weatherToString (currentWeather),
+			day,
+			eventProbability
+		);
+	}
+
+	private string seasonToString (Season s)
+	{
+		switch (s) {
+		case Season.Summer:
+			return "Summer";
+		case Season.Spring:
+			return "Spring";
+		case Season.Fall:
+			return "Fall";
+		case Season.Winter:
+			return "Winter";
+		default:
+			return "BROKEN";
+		}
+	}
+
+	private string weatherToString (Weather w)
+	{
+		switch (w) {
+		case Weather.Snow:
+			return "Snow";
+		case Weather.Cold:
+			return "Cold";
+		case Weather.Clear:
+			return "Clear";
+		case Weather.Raining:
+			return "Raining";
+		case Weather.Hot:
+			return "Hot";
+		default:
+			return "BROKEN";
+		}
 	}
 
 

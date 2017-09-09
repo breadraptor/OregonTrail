@@ -20,6 +20,7 @@ public class PlayerController
 	Health currentHealth;
 	int currentScrap;
 
+	int healthNum = 100;
 	int distanceTravelled;
 
 
@@ -39,13 +40,14 @@ public class PlayerController
 	{
 		return string.Format (@"
       Health: {0},
-      Hunger: {1},
-      Rations: {2},
-      DistanceTravelled: {3},
-      Pace: {4},
-      Ammo: {5},
-      Scrap: {6}
-    ", healthToString (currentHealth), currentHunger, currentRations, distanceTravelled, pace, currentAmmo, currentScrap);
+	  HealthNum: {1},
+      Hunger: {2},
+      Rations: {3},
+      DistanceTravelled: {4},
+      Pace: {5},
+      Ammo: {6},
+      Scrap: {7}
+    ", healthToString (currentHealth), healthNum, currentHunger, currentRations, distanceTravelled, pace, currentAmmo, currentScrap);
 	}
 
 
@@ -151,35 +153,50 @@ public class PlayerController
 		}
 
 		//move health up or down depending on value
-		if (healthScore > 0) {
-			switch (currentHealth) {
-			case Health.Fair:
-				currentHealth = Health.Good;
-				break;
-			case Health.Poor:
-				currentHealth = Health.Fair;
-				break;
-			case Health.Dire:
-				currentHealth = Health.Poor;
-				break;
-			}
-		} else if (healthScore < 0) {
-			switch (currentHealth) {
-			case Health.Good:
-				currentHealth = Health.Fair;
-				break;
-			case Health.Fair:
-				currentHealth = Health.Poor;
-				break;
-			case Health.Poor:
-				currentHealth = Health.Dire;
-				break;
-			case Health.Dire:
-				currentHealth = Health.Dead;
-				break;
-			}
+//		if (healthScore > 0) {
+//			switch (currentHealth) {
+//			case Health.Fair:
+//				currentHealth = Health.Good;
+//				break;
+//			case Health.Poor:
+//				currentHealth = Health.Fair;
+//				break;
+//			case Health.Dire:
+//				currentHealth = Health.Poor;
+//				break;
+//			}
+//		} else if (healthScore < 0) {
+//			switch (currentHealth) {
+//			case Health.Good:
+//				currentHealth = Health.Fair;
+//				break;
+//			case Health.Fair:
+//				currentHealth = Health.Poor;
+//				break;
+//			case Health.Poor:
+//				currentHealth = Health.Dire;
+//				break;
+//			case Health.Dire:
+//				currentHealth = Health.Dead;
+//				break;
+//			}
+//		}
+		healthNum += healthScore;
+		if (healthNum > 100) {
+			healthNum = 100;
 		}
 
+		if (healthNum > 75) {
+			currentHealth = Health.Good;
+		} else if (healthNum > 50) {
+			currentHealth = Health.Fair;
+		} else if (healthNum > 25) {
+			currentHealth = Health.Poor;
+		} else if (healthNum > 10) {
+			currentHealth = Health.Dire;
+		} else if (healthNum <= 0) {
+			currentHealth = Health.Dead;
+		}
 
 	}
 }
