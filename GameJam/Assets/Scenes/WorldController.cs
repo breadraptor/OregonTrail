@@ -16,49 +16,34 @@ enum Season {
 	Fall
 }
 
-enum Month{
-	January,
-	February,
-	March,
-	April,
-	May,
-	June,
-	July,
-	August,
-	September,
-	October,
-	November,
-	December
-}
-
 public class WorldController
 {
-	const double probabilityStep = 0.05;
+	const int probabilityStep = 5;
 	int totalDistance;
 	double eventProbability;
 	Weather currentWeather;
 	Season currentSeason;
-	int seasonLength;
+	int seasonLength = 30;
 	Random rand = new Random ();
-	DateTime date;
+	int day;
 
-	public WorldController (int totalDistance, double startingProbability, Weather startingWeather, Month month, int seasonLength)
-	{
+	public WorldController (int totalDistance, double startingProbability, Weather startingWeather, Season season, int day) {
 		eventProbability = startingProbability;
 		currentWeather = startingWeather;
 		totalDistance = totalDistance;
-		date = month;
-		seasonLength = seasonLength
-	}
+		day = day;
+		currentSeason = season;
+	}	
 
 
-	public void Update ()
-	{
+	public void Update () {
 		UpdateEventProbability ();
+		UpdateSeason ();
+		UpdateWeather ();
+		day++;
 	}
 
-	private void UpdateEventProbability ()
-	{
+	private void UpdateEventProbability () {
 		 eventProbability = eventProbability + probabilityStep;
 	}
 
@@ -134,10 +119,12 @@ public class WorldController
 	}
 
 	private void UpdateSeason() {
-		if()
+		if(day > seasonLength){
+			int current = (int)currentSeason;
+			current += 1;
+			currentSeason = (Season)(current % 4);
+			day = 1;
+		}
 	}
-
-
-
 }
 
