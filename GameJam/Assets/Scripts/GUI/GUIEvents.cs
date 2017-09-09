@@ -8,6 +8,8 @@ public enum GUIEvents {
 	DisplaySupplies,
 	ContinueJourney,
 	ChangePace,
+	ChangeRations,
+	StopToRest,
 	HaveRandomConversation
 }
 

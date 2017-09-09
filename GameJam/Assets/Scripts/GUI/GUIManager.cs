@@ -14,37 +14,18 @@ public class GUIManager : MonoBehaviour {
 	public GameObject currentStatusDisplay;
 	public GameObject mainMenuButton;
 
+	private GameController mainGameController;
+
 	ArrayList mainMenuButtonConfigs = new ArrayList();
+	ArrayList paceMenuButtonConfigs = new ArrayList();
+	ArrayList rationMenuButtonConfigs = new ArrayList();
+	ArrayList restMenuButtonConfigs = new ArrayList();
 
 	void Start () {
-		///// ###### CONFIGURE MAIN MENU BUTTONS ###### /////
-		ButtonConfig continueButton = new ButtonConfig (
-			                              "Continue this crazy journey.",
-			                              delegate { configureUIWithEvent(GUIEvents.ContinueJourney); }
-		                              );
 
-		ButtonConfig suppliesButton = new ButtonConfig (
-			                              "Check supplies",
-			delegate { configureUIWithEvent(GUIEvents.DisplaySupplies); }
-		                              );
+		mainGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController>();
 
-		ButtonConfig testButton = new ButtonConfig (
-			                          "This just reports debug text",
-			                          delegate {
-				clickedOptionFromMenu ("This is some text from a test button");
-			});
-
-
-		mainMenuButtonConfigs.Add (continueButton);
-		mainMenuButtonConfigs.Add (suppliesButton);
-		mainMenuButtonConfigs.Add (testButton);
-
-		ButtonConfig mainMenuButtonConfig = new ButtonConfig (
-			                              "Take a break",
-			                              delegate { configureUIWithEvent (GUIEvents.GoToMenu); }
-		                              );
-
-		configureButton (mainMenuButtonConfig, mainMenuButton);
+		buildAllButtonConfigs ();
 
 		configureUIWithEvent (GUIEvents.GoToMenu);
 
@@ -56,6 +37,7 @@ public class GUIManager : MonoBehaviour {
 
 		switch(uiEvent) {
 		case GUIEvents.GoToMenu:
+			mainGameController.StopWorldCoroutine();
 			displayMainMenu ();
 			break;
 		case GUIEvents.ContinueJourney:
@@ -95,6 +77,8 @@ public class GUIManager : MonoBehaviour {
 		updateCurrentStatusDisplay ("I SWEAR you're continuing your journey right now");
 		currentStatusDisplay.SetActive (true);
 
+		mainGameController.StartWorldCoroutine ();
+
 		mainMenuButton.SetActive (true);
 	}
 
@@ -105,11 +89,11 @@ public class GUIManager : MonoBehaviour {
 		mainMenuButton.SetActive (true);
 	}
 
-	private void updateLocationTimeDisplay(string text) {
+	public void updateLocationTimeDisplay(string text) {
 		locationTimeDisplay.GetComponent<Text> ().text = text;
 	}
 
-	private void updateCurrentStatusDisplay(string text) {
+	public void updateCurrentStatusDisplay(string text) {
 		currentStatusDisplay.GetComponent<Text> ().text = text;
 	}
 
@@ -142,7 +126,45 @@ public class GUIManager : MonoBehaviour {
 		}
 	}
 
-	void clickedOptionFromMenu(string text) {
-		Debug.Log (text);
+	private void buildAllButtonConfigs() {
+		///// ###### CONFIGURE MAIN MENU BUTTONS ###### /////
+		ButtonConfig continueButton = new ButtonConfig (
+			"Continue this crazy journey.",
+			delegate { configureUIWithEvent(GUIEvents.ContinueJourney); }
+		);
+
+		ButtonConfig suppliesButton = new ButtonConfig (
+			"Check supplies",
+			delegate { configureUIWithEvent(GUIEvents.DisplaySupplies); }
+		);
+
+		ButtonConfig paceButton = new ButtonConfig (
+			"Set pace",
+			delegate { configureUIWithEvent(GUIEvents.ChangePace); }
+		);
+
+		ButtonConfig rationsButton = new ButtonConfig (
+			"Set rationing",
+			delegate { configureUIWithEvent(GUIEvents.ChangeRations); }
+		);
+
+		ButtonConfig restButton = new ButtonConfig (
+			"Stop to rest",
+			delegate { configureUIWithEvent(GUIEvents.StopToRest); }
+		);
+
+
+		mainMenuButtonConfigs.Add (continueButton);
+		mainMenuButtonConfigs.Add (suppliesButton);
+		mainMenuButtonConfigs.Add (paceButton);
+		mainMenuButtonConfigs.Add (rationsButton);
+		mainMenuButtonConfigs.Add (restButton);
+
+		ButtonConfig mainMenuButtonConfig = new ButtonConfig (
+			"Take a break",
+			delegate { configureUIWithEvent (GUIEvents.GoToMenu); }
+		);
+
+		configureButton (mainMenuButtonConfig, mainMenuButton);
 	}
 }
