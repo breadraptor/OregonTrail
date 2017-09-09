@@ -123,6 +123,8 @@ public class GUIManager : MonoBehaviour {
 			buttonTransform.offsetMin = Vector2.zero;
 
 			configureButton (config, newButtonObj);
+
+			newButtonObj.SetActive (true);
 		}
 	}
 
