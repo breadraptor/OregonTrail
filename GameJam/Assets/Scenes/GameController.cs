@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		player = new PlayerController ();
+//		player = new PlayerController ();
 	}
 	
 	// Update is called once per frame

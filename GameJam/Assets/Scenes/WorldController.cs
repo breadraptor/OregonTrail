@@ -1,6 +1,6 @@
 ﻿using System;
 
-enum Weather
+public enum Weather
 {
 	Snow,
 	Cold,
@@ -9,7 +9,7 @@ enum Weather
 	Hot
 }
 
-enum Season
+public enum Season
 {
 	Summer,
 	Spring,
