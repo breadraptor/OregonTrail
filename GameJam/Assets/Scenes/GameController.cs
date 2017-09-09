@@ -6,13 +6,14 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
 
-	PlayerController player;
-	WorldController world;
+	public PlayerController player;
+	public WorldController world;
+	Coroutine worldCoroutine;
 
 	// Use this for initialization
 	void Start ()
 	{
-		
+
 		player = new PlayerController (
 			20,
 			1,
@@ -28,14 +29,30 @@ public class GameController : MonoBehaviour
 			Season.Summer,
 			0
 		);
-
-		InvokeRepeating ("UpdateWorldAndPlayer", 0.0f, 3.0f);
-		print ("sup");
+    StartWorldCoroutine();
 	}
+
 
 	// Update is called once per frame
 	void Update ()
 	{
+	}
+
+  public void StartWorldCoroutine() {
+    StartCoroutine ("DriveWorldOnInterval");
+  }
+
+  public void StopWorldCoroutine() {
+    print ("stopping");
+    StopCoroutine("DriveWorldOnInterval");
+  }
+
+	private IEnumerator DriveWorldOnInterval ()
+	{
+		while (true) {
+			yield return new WaitForSeconds (3);
+			UpdateWorldAndPlayer ();
+		}
 	}
 
 	void UpdateWorldAndPlayer ()
