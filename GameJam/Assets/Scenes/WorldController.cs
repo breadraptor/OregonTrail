@@ -32,7 +32,7 @@ public class WorldController
 	{
 		eventProbability = startingProbability;
 		currentWeather = startingWeather;
-		totalDistance = totalDistance;
+		this.totalDistance = totalDistance;
 		day = day;
 		currentSeason = season;
 	}
