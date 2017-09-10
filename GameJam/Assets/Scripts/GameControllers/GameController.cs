@@ -60,6 +60,7 @@ public class GameController : MonoBehaviour
 				if (isResting) {
 					daysToRest -= 1;
 					if (daysToRest < 0) {
+						isResting = false;
 						updateInterval = REGULAR_UPDATE_INTERVAL;
 					}
 				}
