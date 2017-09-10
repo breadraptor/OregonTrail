@@ -22,19 +22,34 @@ public class WorldController
 	const int probabilityStep = 5;
 	int totalDistance;
 	double eventProbability;
-	Weather currentWeather;
-	Season currentSeason;
+	public Weather currentWeather {get; set;}
+	public Season currentSeason {get; set;}
 	int seasonLength = 30;
 	Random rand = new Random ();
-	int day;
+	public int day {get; set;}
 
-	public WorldController (int totalDistance, double startingProbability, Weather startingWeather, Season season, int day)
+	public WorldController (int totalDistance, int startingProbability, Weather startingWeather, Season season, int day)
 	{
 		eventProbability = startingProbability;
 		currentWeather = startingWeather;
 		this.totalDistance = totalDistance;
-		day = day;
+		this.day = day;
 		currentSeason = season;
+	}
+
+	public string toString ()
+	{
+		return string.Format (@"
+      Season: {0},
+      Weather: {1},
+      Day: {2},
+      EventProbability: {3}
+    ",
+			currentSeason,
+			currentWeather,
+			day,
+			eventProbability
+		);
 	}
 
 
