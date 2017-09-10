@@ -10,10 +10,11 @@ public class GameController : MonoBehaviour
 	const double REGULAR_UPDATE_INTERVAL = 3.0;
 	const double RESTING_UPDATE_INTERVAL = 1.5;
 
-	public PlayerController player;
-	public WorldController world;
-	public FrontEndManager frontend;
+	private PlayerController player;
+	private WorldController world;
+
 	Coroutine worldCoroutine;
+	FrontEndManager frontEnd;
 	GUIManager guiMgr;
 
 	double updateInterval;
@@ -43,8 +44,8 @@ public class GameController : MonoBehaviour
 			Season.Summer,
 			0
 		);
-		frontend = GameObject.Find ("FrontEndCanvas").GetComponent<FrontEndManager> ();
-		guiMgr = GameObject.Find ("UIPrefab").GetComponent<GUIManager> ();
+		frontEnd = GameObject.FindGameObjectWithTag ("FrontEndManager").GetComponent<FrontEndManager> ();
+		guiMgr = GameObject.FindGameObjectWithTag ("UIManager").GetComponent<GUIManager> ();
 		isResting = false;
 
 		updateInterval = REGULAR_UPDATE_INTERVAL;
@@ -80,7 +81,7 @@ public class GameController : MonoBehaviour
 
 	public void StartWorldCoroutine ()
 	{
-		frontend.AssetUpdate ();
+		frontEnd.AssetUpdate ();
 		guiMgr.updateCurrentStatusDisplay (GetStatusText ());
 		nextUpdate = DateTime.Now.AddSeconds (updateInterval);
 		shouldUpdate = true;
@@ -153,6 +154,6 @@ Miles Travelled: {3} miles";
 		));
 		player.Update ();
 		world.Update ();
-		frontend.AssetUpdate ();
+		frontEnd.AssetUpdate ();
 	}
 }

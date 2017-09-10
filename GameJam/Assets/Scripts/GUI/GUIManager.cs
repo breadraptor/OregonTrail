@@ -23,7 +23,7 @@ public class GUIManager : MonoBehaviour {
 
 	void Start () {
 
-		mainGameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController>();
+		mainGameController = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameController>();
 
 		buildAllButtonConfigs ();
 
@@ -211,6 +211,7 @@ public class GUIManager : MonoBehaviour {
 		mainMenuButtonConfigs.Add (rationsButton);
 		mainMenuButtonConfigs.Add (restButton);
 
+		///// ###### CONFIGURE JOURNEY SETTINGS BUTTONS ###### /////
 		ButtonConfig paceCrawlingButton = new ButtonConfig (
 			"Crawling",
 			delegate { setPace(Pace.Crawling); }
@@ -280,7 +281,7 @@ public class GUIManager : MonoBehaviour {
 		);
 
 		ButtonConfig restOneDayButton = new ButtonConfig (
-			"One day.",
+			"One day",
 			delegate { setRestTime("one day"); }
 		);
 
