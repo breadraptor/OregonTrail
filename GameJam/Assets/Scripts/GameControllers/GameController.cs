@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
 	public WorldController world;
 	public FrontEndManager frontend;
 	Coroutine worldCoroutine;
+	GUIManager guiMgr;
 
 	double updateInterval;
 
@@ -43,6 +44,7 @@ public class GameController : MonoBehaviour
 			0
 		);
 		frontend = GameObject.Find ("FrontEndCanvas").GetComponent<FrontEndManager> ();
+		guiMgr = GameObject.Find ("UIPrefab").GetComponent<GUIManager> ();
 		isResting = false;
 
 		updateInterval = REGULAR_UPDATE_INTERVAL;
@@ -79,6 +81,7 @@ public class GameController : MonoBehaviour
 	public void StartWorldCoroutine ()
 	{
 		frontend.AssetUpdate ();
+		guiMgr.updateCurrentStatusDisplay (GetStatusText ());
 		nextUpdate = DateTime.Now.AddSeconds (updateInterval);
 		shouldUpdate = true;
 	}
@@ -138,6 +141,7 @@ Miles Travelled: {3} miles";
 	void UpdateWorldAndPlayer ()
 	{
 
+		guiMgr.updateCurrentStatusDisplay (GetStatusText ());
 		print (string.Format (@"
 ----- Player -----
     {0}
