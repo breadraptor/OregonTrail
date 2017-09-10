@@ -21,6 +21,7 @@ public enum Season
 public class WorldController
 {
 	int probabilityStep = 5;
+  public bool eventFlag = false;
 	int totalDistance;
 	double eventProbability;
 	public Weather currentWeather {get; set;}
@@ -141,12 +142,13 @@ public class WorldController
     int rnd = rand.Next(1, 100);
     Debug.Log(rnd);
     if (rnd <= eventProbability) {
-      Debug.Log(rnd + " " + eventProbability + " event!!!");
-
-      eventProbability = 5;
+      Debug.Log("event!!!");
+      eventFlag = true;
+      eventProbability = 5; //reset probability
     }
     else {
       Debug.Log("no event");
+      eventFlag = false;
     }
   }
 
