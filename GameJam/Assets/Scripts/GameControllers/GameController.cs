@@ -239,6 +239,14 @@ Miles Travelled: {3} miles";
 		return distanceToCurrentDestination <= 0;
 	}
 
+	public bool AtFinalDestination() {
+		return AtCurrentDestination () && Locations.locationIsFinal (currentDestination.id);
+	}
+
+	public bool CanTrade() {
+		return AtCurrentDestination () && currentDestination.tradeValue > 0;
+	}
+
 	public void SetNewDestination (Location newLocation, int distance)
 	{
 		currentDestination = newLocation;

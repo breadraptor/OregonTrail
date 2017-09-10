@@ -20,11 +20,20 @@ public class GUIManager : MonoBehaviour
 
 	private GameController mainGameController;
 
-	ArrayList mainMenuButtonConfigs = new ArrayList ();
 	ArrayList paceMenuButtonConfigs = new ArrayList ();
 	ArrayList rationMenuButtonConfigs = new ArrayList ();
 	ArrayList restMenuButtonConfigs = new ArrayList ();
 	ArrayList eventBaseConfigs = new ArrayList ();
+
+	private ButtonConfig continueJourneyButtonConfig;
+	private ButtonConfig setOutButtonConfig;
+	private ButtonConfig checkSuppliesButtonConfig;
+	private ButtonConfig setPaceButtonConfig;
+	private ButtonConfig setPortionsButtonConfig;
+	private ButtonConfig restButtonConfig;
+	private ButtonConfig talkToPeopleButtonConfig;
+	private ButtonConfig tradeButtonConfig;
+	private ButtonConfig checkScoreButtonConfig;
 
 	void Start ()
 	{
@@ -85,6 +94,32 @@ public class GUIManager : MonoBehaviour
 
 	}
 
+	private ArrayList getMainMenuButtonConfigs() {
+		ArrayList mainMenuConfigs = new ArrayList ();
+
+		if (mainGameController.AtFinalDestination ()) {
+			mainMenuConfigs.Add (checkScoreButtonConfig);
+		} else if (mainGameController.AtCurrentDestination ()) {
+			mainMenuConfigs.Add (setOutButtonConfig);
+			mainMenuConfigs.Add (talkToPeopleButtonConfig);
+			if (mainGameController.CanTrade ()) {
+				mainMenuConfigs.Add (tradeButtonConfig);
+			}
+		} else {
+			mainMenuConfigs.Add (continueJourneyButtonConfig);
+		}
+
+		mainMenuConfigs.Add (checkSuppliesButtonConfig);
+
+		if (!mainGameController.AtFinalDestination ()) {
+			mainMenuConfigs.Add (setPaceButtonConfig);
+			mainMenuConfigs.Add (setPortionsButtonConfig);
+			mainMenuConfigs.Add (restButtonConfig);
+		}
+
+		return mainMenuConfigs;
+	}
+
 	private void displayMainMenu ()
 	{
 		Debug.Log ("Going to menu");
@@ -99,7 +134,7 @@ public class GUIManager : MonoBehaviour
 			
 		currentStatusDisplay.SetActive (true);
 
-		setChoicesMenuWithOptions (mainMenuButtonConfigs);
+		setChoicesMenuWithOptions (getMainMenuButtonConfigs());
 		choicesMenu.SetActive (true);
 	}
 
@@ -284,36 +319,50 @@ public class GUIManager : MonoBehaviour
 	private void buildAllButtonConfigs ()
 	{
 		///// ###### CONFIGURE MAIN MENU BUTTONS ###### /////
-		ButtonConfig continueButton = new ButtonConfig (
-			"Continue this crazy journey",
+		continueJourneyButtonConfig = new ButtonConfig (
+			"Continue on your journey",
 			delegate { configureUIWithEvent (GUIEvents.ContinueJourney); }
 		);
 
-		ButtonConfig suppliesButton = new ButtonConfig (
+		setOutButtonConfig = new ButtonConfig (
+			"Set out",
+			delegate { configureUIWithEvent (GUIEvents.ContinueJourney); }
+		);
+
+		checkSuppliesButtonConfig = new ButtonConfig (
 			"Check supplies",
 			delegate { configureUIWithEvent (GUIEvents.DisplaySupplies); }
 		);
 
-		ButtonConfig paceButton = new ButtonConfig (
-			"Set pace",
+		setPaceButtonConfig = new ButtonConfig (
+			"Set travel pace",
 			delegate { configureUIWithEvent (GUIEvents.ChangePace); }
 		);
 
-		ButtonConfig rationsButton = new ButtonConfig (
-			"Set rationing",
+		setPortionsButtonConfig = new ButtonConfig (
+			"Set portion size",
 			delegate { configureUIWithEvent (GUIEvents.ChangeRations); }
 		);
 
-		ButtonConfig restButton = new ButtonConfig (
+		restButtonConfig = new ButtonConfig (
 			"Stop to rest",
 			delegate { configureUIWithEvent (GUIEvents.StopToRest); }
 		);
 
-		mainMenuButtonConfigs.Add (continueButton);
-		mainMenuButtonConfigs.Add (suppliesButton);
-		mainMenuButtonConfigs.Add (paceButton);
-		mainMenuButtonConfigs.Add (rationsButton);
-		mainMenuButtonConfigs.Add (restButton);
+		talkToPeopleButtonConfig = new ButtonConfig (
+			"Talk to somebody",
+			delegate { Debug.Log("TODO: Talk to people..."); }
+		);
+
+		tradeButtonConfig = new ButtonConfig (
+			"Trade with somebody",
+			delegate { Debug.Log("TODO: Trade with people..."); }
+		);
+
+		checkScoreButtonConfig = new ButtonConfig (
+			"Final score",
+			delegate { Debug.Log("TODO: Check your final score..."); }
+		);
 
 		///// ###### CONFIGURE JOURNEY SETTINGS BUTTONS ###### /////
 		ButtonConfig paceCrawlingButton = new ButtonConfig (

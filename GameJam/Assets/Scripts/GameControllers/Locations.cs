@@ -36,7 +36,7 @@ public static class Locations
 		locFinder = new LocationFinder ();
 
 		// NOTE: Always have 'UNKNOWN' location first in list
-		Location unknownLocation = new Location ("UNKNOWN LOCATION", "YOU SHOULD NOT BE ABLE TO GET HERE", "UNKNOWN");
+		Location unknownLocation = new Location ("UNKNOWN LOCATION", "YOU SHOULD NOT BE ABLE TO GET HERE", "UNKNOWN", 0);
 		unknownLocation.addDestination (new Destination ("UNKNOWN", 0));
 		locations.Add (unknownLocation);
 
@@ -57,42 +57,42 @@ public static class Locations
 		string sunriseCityDesc = "A golden city on a hilltop, overrun with corruption and crime.";
 		string crowsRestDesc = "A city that's gotten its legs under it. There is a functioning government and power grid.";
 
-		Location festerland = new Location ("Old Festerland", festerlandDesc, "old_festerland");
+		Location festerland = new Location ("Old Festerland", festerlandDesc, "old_festerland", 8);
 		festerland.addDestination(new Destination("shambles", 350));
 		festerland.addDestination(new Destination("the_hanging_fort", 500));
-		Location shambles = new Location ("Shambles", shamblesDesc, "shambles");
+		Location shambles = new Location ("Shambles", shamblesDesc, "shambles", 2);
 		shambles.addDestination(new Destination("flint", 600));
 		shambles.addDestination(new Destination("downstone", 840));
-		Location flint = new Location ("Flint", flintDesc, "flint");
+		Location flint = new Location ("Flint", flintDesc, "flint", 2);
 		flint.addDestination(new Destination("crossroads", 520));
-		Location crossroads = new Location ("Crossroads", crossroadsDesc, "crossroads");
+		Location crossroads = new Location ("Crossroads", crossroadsDesc, "crossroads", 10);
 		crossroads.addDestination(new Destination("lost_pass", 830));
-		Location lostPass = new Location ("Lost Pass", lostPassDesc, "lost_pass");
+		Location lostPass = new Location ("Lost Pass", lostPassDesc, "lost_pass", 0);
 		lostPass.addDestination(new Destination("crows_rest", 615));
-		Location downstone = new Location ("Downstone", downstoneDesc, "downstone");
+		Location downstone = new Location ("Downstone", downstoneDesc, "downstone", 4);
 		downstone.addDestination(new Destination("hangedman", 730));
 		downstone.addDestination(new Destination("last_bullet", 900));
-		Location hangedman = new Location ("Hangedman", hangedmanDesc, "hangedman");
+		Location hangedman = new Location ("Hangedman", hangedmanDesc, "hangedman", 2);
 		hangedman.addDestination(new Destination("crows_rest", 885));
-		Location lastBullet = new Location ("Last Bullet", lastBulletDesc, "last_bullet");
+		Location lastBullet = new Location ("Last Bullet", lastBulletDesc, "last_bullet", 5);
 		lastBullet.addDestination(new Destination("crows_rest", 820));
-		Location theHangingFort = new Location ("The Hanging Fort", theHangingFortDesc, "the_hanging_fort");
+		Location theHangingFort = new Location ("The Hanging Fort", theHangingFortDesc, "the_hanging_fort", 2);
 		theHangingFort.addDestination(new Destination("long_roads_rest", 1865));
 		theHangingFort.addDestination(new Destination("silver_gully", 855));
 		theHangingFort.addDestination(new Destination("shatter_pass", 630));
-		Location longRoadsRest = new Location ("Long Road's Rest", longRoadsRestDesc, "long_roads_rest");
+		Location longRoadsRest = new Location ("Long Road's Rest", longRoadsRestDesc, "long_roads_rest", 6);
 		longRoadsRest.addDestination(new Destination("crows_rest", 430));
-		Location silverGully = new Location ("Silver Gully", silverGullyDesc, "silver_gully");
+		Location silverGully = new Location ("Silver Gully", silverGullyDesc, "silver_gully", 3);
 		silverGully.addDestination(new Destination("lake_fishbone", 920));
-		Location lakeFishbone = new Location ("Lake Fishbone", lakeFishboneDesc, "lake_fishbone");
+		Location lakeFishbone = new Location ("Lake Fishbone", lakeFishboneDesc, "lake_fishbone", 1);
 		lakeFishbone.addDestination(new Destination("crows_rest", 845));
-		Location shatterPass = new Location ("Shatter Pass", shatterPassDesc, "shatter_pass");
+		Location shatterPass = new Location ("Shatter Pass", shatterPassDesc, "shatter_pass", 0);
 		shatterPass.addDestination(new Destination("the_deeps", 620));
-		Location theDeeps = new Location ("The Deeps", theDeepsDesc, "the_deeps");
+		Location theDeeps = new Location ("The Deeps", theDeepsDesc, "the_deeps", 2);
 		theDeeps.addDestination(new Destination("lost_pass", 440));
-		Location sunriseCity = new Location ("Sunrise City", sunriseCityDesc, "sunrise_city");
+		Location sunriseCity = new Location ("Sunrise City", sunriseCityDesc, "sunrise_city", 8);
 		sunriseCity.addDestination(new Destination("crows_rest", 540));
-		Location crowsRest = new Location ("Crow's Rest", crowsRestDesc, "crows_rest");
+		Location crowsRest = new Location ("Crow's Rest", crowsRestDesc, "crows_rest", 0);
 
 		locations.Add (festerland);
 		locations.Add (shambles);
@@ -150,13 +150,15 @@ public class Location
 	public string name;
 	public string description;
 	public string id;
+	public int tradeValue;
 	public ArrayList destinations = new ArrayList ();
 
-	public Location (string locationName, string locationDescription, string locationId)
+	public Location (string locationName, string locationDescription, string locationId, int locationTradeValue)
 	{
 		name = locationName;
 		description = locationDescription;
 		id = locationId;
+		tradeValue = locationTradeValue;
 	}
 
 	public void addDestination (Destination d)
