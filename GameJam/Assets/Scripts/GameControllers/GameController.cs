@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour
 	public WorldController world;
 	Coroutine worldCoroutine;
 
+  int dayInterval = 3;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -49,16 +51,16 @@ public class GameController : MonoBehaviour
 	private IEnumerator DriveWorldOnInterval ()
 	{
 		while (true) {
-			yield return new WaitForSeconds (3);
+			yield return new WaitForSeconds (dayInterval);
 			UpdateWorldAndPlayer ();
 		}
 	}
 
   public string GetStatusText() {
     string fmtString = @"Date: {0}
-    Health: {1}
-    Rations: {2}
-    Miles Travelled: {3} miles";
+Health: {1}
+Rations: {2}
+Miles Travelled: {3} miles";
     string dateString = string.Format("{0} {1}", world.currentSeason, world.day);
     return string.Format(
       fmtString,
@@ -67,7 +69,30 @@ public class GameController : MonoBehaviour
       player.currentRations,
       player.distanceTravelled
     );
+  }
 
+  public Weather GetWeather() {
+    return world.currentWeather;
+  }
+
+  public Season GetSeason() {
+    return world.currentSeason;
+  }
+
+  public void SetPlayerPace(Pace newPace) {
+    player.pace = newPace;
+  }
+
+  public Pace GetPlayerPace() {
+    return player.pace;
+  }
+
+  public Portion GetPlayerPortion() {
+    return player.currentPortion;
+  }
+
+  public void SetPlayerPortion(Portion newPortion) {
+   player.currentPortion = newPortion;
   }
 
 
