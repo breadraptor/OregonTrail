@@ -3,31 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GUIManager : MonoBehaviour {
+public class GUIManager : MonoBehaviour
+{
 
 	public Font mainFont;
-	private int maxChoicesCount = 5;
+	private int maxChoicesCount = 8;
 	public GameObject defaultText;
 	public GameObject defaultButton;
 	public GameObject choicesMenu;
 	public GameObject locationTimeDisplay;
 	public GameObject currentStatusDisplay;
-  public GameObject alertDisplay;
-  public GameObject alertAsset;
+	public GameObject alertDisplay;
+	public GameObject alertAsset;
 	public GameObject mainMenuButton;
-  public string eventText;
+	public string eventText;
 
 	private GameController mainGameController;
 
-	ArrayList mainMenuButtonConfigs = new ArrayList();
-	ArrayList paceMenuButtonConfigs = new ArrayList();
-	ArrayList rationMenuButtonConfigs = new ArrayList();
-	ArrayList restMenuButtonConfigs = new ArrayList();
-  ArrayList eventBaseConfigs = new ArrayList();
+	ArrayList mainMenuButtonConfigs = new ArrayList ();
+	ArrayList paceMenuButtonConfigs = new ArrayList ();
+	ArrayList rationMenuButtonConfigs = new ArrayList ();
+	ArrayList restMenuButtonConfigs = new ArrayList ();
+	ArrayList eventBaseConfigs = new ArrayList ();
 
-  void Start () {
+	void Start ()
+	{
 
-		mainGameController = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameController>();
+		mainGameController = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameController> ();
 
 		buildAllButtonConfigs ();
 
@@ -38,12 +40,13 @@ public class GUIManager : MonoBehaviour {
 	}
 
 
-	public void configureUIWithEvent(GUIEvents uiEvent) {
+	public void configureUIWithEvent (GUIEvents uiEvent)
+	{
 		deactivateAllDisplays ();
 
-		switch(uiEvent) {
+		switch (uiEvent) {
 		case GUIEvents.GoToMenu:
-			mainGameController.StopWorldCoroutine();
+			mainGameController.StopWorldCoroutine ();
 			displayMainMenu ();
 			break;
 		case GUIEvents.ContinueJourney:
@@ -61,29 +64,31 @@ public class GUIManager : MonoBehaviour {
 		case GUIEvents.StopToRest:
 			displayRestMenu ();
 			break;
-    case GUIEvents.WorldEvent:
-        displayEventMenu();
-        break;
+		case GUIEvents.WorldEvent:
+			displayEventMenu ();
+			break;
 		default:
 			Debug.Log ("UNRECOGNIZED EVENT: " + uiEvent.ToString ());
 			break;
 		}
 	}
 
-	private void deactivateAllDisplays() {
+	private void deactivateAllDisplays ()
+	{
 		
 		locationTimeDisplay.SetActive (false);
 		currentStatusDisplay.SetActive (false);
 		choicesMenu.SetActive (false);
 		mainMenuButton.SetActive (false);
-    alertDisplay.SetActive(false);
-    alertAsset.SetActive(false);
+		alertDisplay.SetActive (false);
+		alertAsset.SetActive (false);
 
 	}
 
-	private void displayMainMenu() {
+	private void displayMainMenu ()
+	{
 		Debug.Log ("Going to menu");
-		updateLocationTimeDisplay (mainGameController.GetDestinationDescription());
+		updateLocationTimeDisplay (mainGameController.GetDestinationDescription ());
 		locationTimeDisplay.SetActive (true);
 
 		if (mainGameController.AtCurrentDestination ()) {
@@ -98,7 +103,8 @@ public class GUIManager : MonoBehaviour {
 		choicesMenu.SetActive (true);
 	}
 
-	private void displayContinueJourneyMenu() {
+	private void displayContinueJourneyMenu ()
+	{
 		if (mainGameController.AtCurrentDestination ()) {
 
 			updateCurrentStatusDisplay ("Where would you like to go?");
@@ -107,18 +113,22 @@ public class GUIManager : MonoBehaviour {
 
 			ArrayList destinationOptions = new ArrayList ();
 			ButtonConfig stayButton = new ButtonConfig (
-				"Stay here",
-				delegate { setNewDestination(null, 0); }
-			);
+				                          "Stay here",
+				                          delegate {
+					setNewDestination (null, 0);
+				}
+			                          );
 			destinationOptions.Add (stayButton);
 
-			for(int i = 0; i < nextDestinations.Count; ++i) {
+			for (int i = 0; i < nextDestinations.Count; ++i) {
 				Destination destination = (Destination)nextDestinations [i];
 				Location location = Locations.getLocationWithId (destination.id);
 				ButtonConfig destinationButton = new ButtonConfig (
-					location.name + " <- " + destination.distance + "mi.",
-					delegate { setNewDestination(location, destination.distance); }
-				);
+					                                 location.name + " <- " + destination.distance + "mi.",
+					                                 delegate {
+						setNewDestination (location, destination.distance);
+					}
+				                                 );
 				destinationOptions.Add (destinationButton);
 			}
 
@@ -134,7 +144,8 @@ public class GUIManager : MonoBehaviour {
 		currentStatusDisplay.SetActive (true);
 	}
 
-	private void setNewDestination(Location newLocation, int distance) {
+	private void setNewDestination (Location newLocation, int distance)
+	{
 		if (distance == 0) {
 			configureUIWithEvent (GUIEvents.GoToMenu);
 		} else {
@@ -150,7 +161,8 @@ public class GUIManager : MonoBehaviour {
 		}
 	}
 
-	private void displaySuppliesMenu() {
+	private void displaySuppliesMenu ()
+	{
 		string suppliesText = mainGameController.GetStatusText ();
 		updateCurrentStatusDisplay (suppliesText);
 		currentStatusDisplay.SetActive (true);
@@ -158,7 +170,8 @@ public class GUIManager : MonoBehaviour {
 		mainMenuButton.SetActive (true);
 	}
 
-	private void displayPaceMenu() {
+	private void displayPaceMenu ()
+	{
 		updateCurrentStatusDisplay ("What travel pace would you like to set?...");
 		currentStatusDisplay.SetActive (true);
 
@@ -166,7 +179,8 @@ public class GUIManager : MonoBehaviour {
 		choicesMenu.SetActive (true);
 	}
 
-	private void displayRationsMenu() {
+	private void displayRationsMenu ()
+	{
 		updateCurrentStatusDisplay ("What portion size would you like to consume?...");
 		currentStatusDisplay.SetActive (true);
 
@@ -174,7 +188,8 @@ public class GUIManager : MonoBehaviour {
 		choicesMenu.SetActive (true);
 	}
 
-	private void displayRestMenu() {
+	private void displayRestMenu ()
+	{
 		updateCurrentStatusDisplay ("How long would you like to rest?...");
 		currentStatusDisplay.SetActive (true);
 
@@ -182,38 +197,45 @@ public class GUIManager : MonoBehaviour {
 		choicesMenu.SetActive (true);
 	}
 
-  private void displayEventMenu() {
-    updateAlertDisplay(eventText);
-    alertDisplay.SetActive(true);
-    alertAsset.SetActive(true);
-    setLowerMenuWithOptions(eventBaseConfigs);
-    choicesMenu.SetActive(true);
-    currentStatusDisplay.SetActive(true);
-  }
+	private void displayEventMenu ()
+	{
+		updateAlertDisplay (eventText);
+		alertDisplay.SetActive (true);
+		alertAsset.SetActive (true);
+		setChoicesMenuWithOptions (eventBaseConfigs);
+		choicesMenu.SetActive (true);
+		currentStatusDisplay.SetActive (true);
+	}
 
-	public void updateLocationTimeDisplay(string text) {
+	public void updateLocationTimeDisplay (string text)
+	{
 		locationTimeDisplay.GetComponent<Text> ().text = text;
 	}
 
-	public void updateCurrentStatusDisplay(string text) {
+	public void updateCurrentStatusDisplay (string text)
+	{
 		currentStatusDisplay.GetComponent<Text> ().text = text;
 	}
 
-  public void updateAlertDisplay(string text) {
-    alertDisplay.GetComponent<Text>().text = text;
-  }
+	public void updateAlertDisplay (string text)
+	{
+		alertDisplay.GetComponent<Text> ().text = text;
+	}
 
-	private void setPace(Pace pace) {
+	private void setPace (Pace pace)
+	{
 		mainGameController.SetPlayerPace (pace);
 		configureUIWithEvent (GUIEvents.GoToMenu);
 	}
 
-	private void setPortions(Portion portion) {
+	private void setPortions (Portion portion)
+	{
 		mainGameController.SetPlayerPortion (portion);
 		configureUIWithEvent (GUIEvents.GoToMenu);
 	}
 
-	private void setRestTime(int restTime) {
+	private void setRestTime (int restTime)
+	{
 		if (restTime > 0) {
 			mainGameController.RestForDays (restTime);
 			deactivateAllDisplays ();
@@ -225,7 +247,8 @@ public class GUIManager : MonoBehaviour {
 		}
 	}
 
-	void setChoicesMenuWithOptions(ArrayList buttonConfigs) {
+	void setChoicesMenuWithOptions (ArrayList buttonConfigs)
+	{
 
 		Button[] currentButtons = choicesMenu.GetComponentsInChildren<Button> ();
 		for (int i = 0; i < currentButtons.Length; ++i) {
@@ -233,13 +256,14 @@ public class GUIManager : MonoBehaviour {
 		}
 
 		float buttonSize = 1.0f / (float)maxChoicesCount;
+		float buttonsTop = buttonSize * buttonConfigs.Count;
 
 		for (int i = 0; i < buttonConfigs.Count && i < maxChoicesCount; ++i) {
 			ButtonConfig config = (ButtonConfig)buttonConfigs [i];
 			GameObject newButtonObj = Instantiate (defaultButton, choicesMenu.transform);
 			newButtonObj.name = "Choice Button " + i;
 			RectTransform buttonTransform = newButtonObj.GetComponent<RectTransform> ();
-			float anchorPos = 1.0f - (buttonSize * i);
+			float anchorPos = buttonsTop - (buttonSize * i);
 			buttonTransform.anchorMax = new Vector2 (1.0f, anchorPos);
 			buttonTransform.anchorMin = new Vector2 (0.0f, anchorPos - buttonSize);
 			buttonTransform.offsetMax = Vector2.zero;
@@ -251,60 +275,38 @@ public class GUIManager : MonoBehaviour {
 		}
 	}
 
-  void setLowerMenuWithOptions(ArrayList buttonConfigs) {
-    Button[] currentButtons = choicesMenu.GetComponentsInChildren<Button>();
-    for (int i = 0; i < currentButtons.Length; ++i) {
-      DestroyImmediate(currentButtons[i].gameObject);
-    }
-
-    float buttonSize = 1.0f / (float)maxChoicesCount;
-
-    for (int i = 0; i < buttonConfigs.Count && i < maxChoicesCount; ++i) {
-      ButtonConfig config = (ButtonConfig)buttonConfigs[i];
-      GameObject newButtonObj = Instantiate(defaultButton, choicesMenu.transform);
-      newButtonObj.name = "Choice Button " + i;
-      RectTransform buttonTransform = newButtonObj.GetComponent<RectTransform>();
-      float anchorPos = 0.5f - (buttonSize * i); // y
-      buttonTransform.anchorMax = new Vector2(1.0f, anchorPos);
-      buttonTransform.anchorMin = new Vector2(0.0f, anchorPos - buttonSize);
-      buttonTransform.offsetMax = Vector2.zero;
-      buttonTransform.offsetMin = Vector2.zero;
-
-      configureButton(config, newButtonObj);
-
-      newButtonObj.SetActive(true);
-    }
-  }
-	private void configureButton(ButtonConfig config, GameObject button) {
+	private void configureButton (ButtonConfig config, GameObject button)
+	{
 		button.GetComponentInChildren<Text> ().text = config.displayText;
 		button.GetComponent<Button> ().onClick.AddListener (config.action);
 	}
 
-	private void buildAllButtonConfigs() {
+	private void buildAllButtonConfigs ()
+	{
 		///// ###### CONFIGURE MAIN MENU BUTTONS ###### /////
 		ButtonConfig continueButton = new ButtonConfig (
-			"Continue this crazy journey.",
-			delegate { configureUIWithEvent(GUIEvents.ContinueJourney); }
+			"Continue this crazy journey",
+			delegate { configureUIWithEvent (GUIEvents.ContinueJourney); }
 		);
 
 		ButtonConfig suppliesButton = new ButtonConfig (
 			"Check supplies",
-			delegate { configureUIWithEvent(GUIEvents.DisplaySupplies); }
+			delegate { configureUIWithEvent (GUIEvents.DisplaySupplies); }
 		);
 
 		ButtonConfig paceButton = new ButtonConfig (
 			"Set pace",
-			delegate { configureUIWithEvent(GUIEvents.ChangePace); }
+			delegate { configureUIWithEvent (GUIEvents.ChangePace); }
 		);
 
 		ButtonConfig rationsButton = new ButtonConfig (
 			"Set rationing",
-			delegate { configureUIWithEvent(GUIEvents.ChangeRations); }
+			delegate { configureUIWithEvent (GUIEvents.ChangeRations); }
 		);
 
 		ButtonConfig restButton = new ButtonConfig (
 			"Stop to rest",
-			delegate { configureUIWithEvent(GUIEvents.StopToRest); }
+			delegate { configureUIWithEvent (GUIEvents.StopToRest); }
 		);
 
 		mainMenuButtonConfigs.Add (continueButton);
@@ -316,27 +318,27 @@ public class GUIManager : MonoBehaviour {
 		///// ###### CONFIGURE JOURNEY SETTINGS BUTTONS ###### /////
 		ButtonConfig paceCrawlingButton = new ButtonConfig (
 			"Crawling",
-			delegate { setPace(Pace.Crawling); }
+			delegate { setPace (Pace.Crawling); }
 		);
 
 		ButtonConfig paceSlowButton = new ButtonConfig (
 			"Slow",
-			delegate { setPace(Pace.Slow); }
+			delegate { setPace (Pace.Slow); }
 		);
 
 		ButtonConfig paceNormalButton = new ButtonConfig (
 			"Normal",
-			delegate { setPace(Pace.Normal); }
+			delegate { setPace (Pace.Normal); }
 		);
 
 		ButtonConfig paceQuickButton = new ButtonConfig (
 			"Quick",
-			delegate { setPace(Pace.Quick); }
+			delegate { setPace (Pace.Quick); }
 		);
 
 		ButtonConfig paceStrenuousButton = new ButtonConfig (
 			"Strenuous",
-			delegate { setPace(Pace.Strenuous); }
+			delegate { setPace (Pace.Strenuous); }
 		);
 
 		paceMenuButtonConfigs.Add (paceCrawlingButton);
@@ -345,30 +347,29 @@ public class GUIManager : MonoBehaviour {
 		paceMenuButtonConfigs.Add (paceQuickButton);
 		paceMenuButtonConfigs.Add (paceStrenuousButton);
 
-
 		ButtonConfig rationsStarvingButton = new ButtonConfig (
 			"Starving",
-			delegate { setPortions(Portion.Starving); }
+			delegate { setPortions (Portion.Starving); }
 		);
 
 		ButtonConfig rationsMeagerButton = new ButtonConfig (
 			"Meager",
-			delegate { setPortions(Portion.Meager); }
+			delegate { setPortions (Portion.Meager); }
 		);
 
 		ButtonConfig rationsModerateButton = new ButtonConfig (
 			"Moderate",
-			delegate { setPortions(Portion.Moderate); }
+			delegate { setPortions (Portion.Moderate); }
 		);
 
 		ButtonConfig rationsNormalButton = new ButtonConfig (
 			"Normal",
-			delegate { setPortions(Portion.Normal); }
+			delegate { setPortions (Portion.Normal); }
 		);
 
 		ButtonConfig rationsPlentifulButton = new ButtonConfig (
 			"Plentiful",
-			delegate { setPortions(Portion.Plentiful); }
+			delegate { setPortions (Portion.Plentiful); }
 		);
 
 		rationMenuButtonConfigs.Add (rationsStarvingButton);
@@ -379,36 +380,36 @@ public class GUIManager : MonoBehaviour {
 
 		ButtonConfig restNoneButton = new ButtonConfig (
 			"Nevermind",
-			delegate { setRestTime(0); }
+			delegate { setRestTime (0); }
 		);
 
 		ButtonConfig restOneDayButton = new ButtonConfig (
 			"One day",
-			delegate { setRestTime(1); }
+			delegate { setRestTime (1); }
 		);
 
 		ButtonConfig restThreeDaysButton = new ButtonConfig (
 			"Three days",
-			delegate { setRestTime(3); }
+			delegate { setRestTime (3); }
 		);
 
 		ButtonConfig restFiveDaysButton = new ButtonConfig (
 			"Five days",
-			delegate { setRestTime(5); }
+			delegate { setRestTime (5); }
 		);
 
 		restMenuButtonConfigs.Add (restNoneButton);
 		restMenuButtonConfigs.Add (restOneDayButton);
 		restMenuButtonConfigs.Add (restThreeDaysButton);
-    restMenuButtonConfigs.Add(restFiveDaysButton);
+		restMenuButtonConfigs.Add (restFiveDaysButton);
 
-    ButtonConfig eventContinueButton = new ButtonConfig(
-      "Continue",
-      delegate { configureUIWithEvent(GUIEvents.ContinueJourney); }
-      );
-    eventBaseConfigs.Add(eventContinueButton);
+		ButtonConfig eventContinueButton = new ButtonConfig (
+			"Continue",
+			delegate { configureUIWithEvent (GUIEvents.ContinueJourney); }
+		);
+		eventBaseConfigs.Add (eventContinueButton);
 
-    ButtonConfig mainMenuButtonConfig = new ButtonConfig (
+		ButtonConfig mainMenuButtonConfig = new ButtonConfig (
 			"Take a break",
 			delegate { configureUIWithEvent (GUIEvents.GoToMenu); }
 		);
