@@ -68,6 +68,10 @@ public class GameController : MonoBehaviour
 			if (DateTime.Now >= nextUpdate) {
 				nextUpdate = DateTime.Now.AddSeconds (updateInterval);
 				UpdateWorldAndPlayer ();
+        if (player.currentHealth == Health.Dead) {
+          StopWorldCoroutine();
+          Debug.Log("YOU DIED.");
+        }
         if (world.eventFlag) {
           guiMgr.eventText = "";
           StopWorldCoroutine();
@@ -174,17 +178,24 @@ public class GameController : MonoBehaviour
         player.currentAmmo -= num;
       }
     }
-    else if (e.resource == "health") {
-      //todo
-      Debug.Log("illness here");
-      e.result = "";
+    else if (e.resource == "health" && player.illness == null) {
+      int num = rand.Next(1, 3);
+      if (num == 1) {
+        player.illness = "twengies";
+      }
+      else if (num == 2) {
+        player.illness = "dysentery";
+      }
+      else {
+        player.illness = "loon eye";
+      }
+      e.result = player.illness + ".";
     }
     else if (e.resource == "time") {
       int num = rand.Next(1, 5);
       e.result = "You lose " + num + " day(s).";
       world.day += num;
     }
-    Debug.Log(e.result);
     return e.description + " " + e.result;
   }
 
@@ -284,10 +295,10 @@ Miles Travelled: {3} miles";
 	{
 		worldEvents [0] = new WorldEvent ("You get lost.", "time", false);
 		worldEvents [1] = new WorldEvent ("Find a small ration cache.", "rations", true);
-		worldEvents [2] = new WorldEvent ("You have the twengies.", "health", false);
+		worldEvents [2] = new WorldEvent ("You have the ", "health", false);
 		worldEvents [3] = new WorldEvent ("You find an abandoned car.", "any", true);
 		worldEvents [4] = new WorldEvent ("Someone stole from your camp.", "any", false);
-		worldEvents [5] = new WorldEvent ("A kind traveller gave you some extra batteries.", "ammo", true);
+		worldEvents [5] = new WorldEvent ("A traveller gave you some extra batteries.", "ammo", true);
 		worldEvents [6] = new WorldEvent ("Your backpack ripped.", "any", false);
 		worldEvents [7] = new WorldEvent ("Rough terrain.", "time", false);
 		worldEvents [8] = new WorldEvent ("You find an abandoned camp.", "any", true);

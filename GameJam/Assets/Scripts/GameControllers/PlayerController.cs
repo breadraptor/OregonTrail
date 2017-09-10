@@ -30,22 +30,18 @@ public enum Portion {
 
 public class PlayerController
 {
-	public Pace pace { get; set; }
-
-	public Portion currentPortion { get; set; }
-
-	public int currentRations { get; set; }
-
-	public int currentAmmo { get; set; }
-
-	public Health currentHealth { get; set; }
-
-	public int currentScrap { get; set; }
-
+  public Pace pace;
+  public Portion currentPortion;
+  public int currentRations;
+  public int currentAmmo;
+  public Health currentHealth;
+  public int currentScrap;
 	int healthNum = 100;
-
 	public int distanceTravelled;
+  public string illness = null;
+  System.Random rand = new System.Random();
 
+  private int daysSick = 0;
 
 	// Use this for initialization
 	public PlayerController (Pace pace, Portion portion, int rations, int ammo, int scrap)
@@ -167,6 +163,30 @@ public class PlayerController
       default:
         //this is chill
         break;
+    }
+
+    if (illness != null) {
+      daysSick++;
+      int num = rand.Next(1, 100);
+      if (healthScore >= 4 && daysSick >= 3 && num >= 20) {
+        // cured for good behavior
+        illness = null;
+        daysSick = 0;
+      }
+      else if ((healthScore < 4 && num >= 80) || (daysSick >= 15)) {
+        // cured, but you got lucky (or you were sick for long enough)
+        illness = null;
+        daysSick = 0;
+        healthScore -= 2;
+      }
+      else if (healthScore > 0) {
+        // base illness subtraction.
+        healthScore -= 15;
+      }
+      else {
+        // stop killing yourself
+        healthScore -= 25;
+      }
     }
 
 		healthNum += healthScore;

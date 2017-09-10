@@ -142,12 +142,10 @@ public class WorldController
     int rnd = rand.Next(1, 100);
     Debug.Log(rnd);
     if (rnd <= eventProbability) {
-      Debug.Log("event!!!");
       eventFlag = true;
       eventProbability = 5; //reset probability
     }
     else {
-      Debug.Log("no event");
       eventFlag = false;
     }
   }
