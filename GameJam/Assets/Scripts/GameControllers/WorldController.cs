@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 public enum Weather
 {
@@ -19,13 +20,13 @@ public enum Season
 
 public class WorldController
 {
-	const int probabilityStep = 5;
+	int probabilityStep = 5;
 	int totalDistance;
 	double eventProbability;
 	public Weather currentWeather {get; set;}
 	public Season currentSeason {get; set;}
 	int seasonLength = 30;
-	Random rand = new Random ();
+	System.Random rand = new System.Random ();
 	public int day {get; set;}
 
 	public WorldController (int totalDistance, int startingProbability, Weather startingWeather, Season season, int day)
@@ -64,6 +65,8 @@ public class WorldController
 	private void UpdateEventProbability ()
 	{
 		eventProbability = eventProbability + probabilityStep;
+    probabilityStep = rand.Next(1, 20);
+    CheckEvent();
 	}
 
 	private void UpdateWeather ()
@@ -133,5 +136,21 @@ public class WorldController
 			day = 1;
 		}
 	}
+
+  private void CheckEvent() {
+    int rnd = rand.Next(1, 100);
+    Debug.Log(rnd);
+    if (rnd <= eventProbability) {
+      Debug.Log(rnd + " " + eventProbability + " event!!!");
+
+      eventProbability = 5;
+    }
+    else {
+      Debug.Log("no event");
+    }
+  }
+
 }
+
+
 
