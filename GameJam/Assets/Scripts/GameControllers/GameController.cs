@@ -65,6 +65,9 @@ public class GameController : MonoBehaviour
 					if (daysToRest < 0) {
 						isResting = false;
 						updateInterval = REGULAR_UPDATE_INTERVAL;
+						guiMgr.configureUIWithEvent (GUIEvents.GoToMenu);
+					} else {
+						guiMgr.updateCurrentStatusDisplay ("Resting for " + (daysToRest + 1) + " more day(s)");
 					}
 				}
 			}
