@@ -141,10 +141,16 @@ public class GUIManager : MonoBehaviour {
 		configureUIWithEvent (GUIEvents.GoToMenu);
 	}
 
-	private void setRestTime(string restTime) {
-		Debug.Log ("Resting for " + restTime);
-
-		configureUIWithEvent (GUIEvents.GoToMenu);
+	private void setRestTime(int restTime) {
+		if (restTime > 0) {
+			mainGameController.RestForDays (restTime);
+			deactivateAllDisplays ();
+			updateCurrentStatusDisplay ("Resting for " + restTime + " days...");
+			currentStatusDisplay.SetActive (true);
+			mainGameController.StartWorldCoroutine ();
+		} else {
+			configureUIWithEvent (GUIEvents.GoToMenu);
+		}
 	}
 
 	void setChoicesMenuWithOptions(ArrayList buttonConfigs) {
@@ -276,18 +282,23 @@ public class GUIManager : MonoBehaviour {
 		rationMenuButtonConfigs.Add (rationsPlentifulButton);
 
 		ButtonConfig restNoneButton = new ButtonConfig (
-			"None",
-			delegate { setRestTime("no days"); }
+			"Nevermind",
+			delegate { setRestTime(0); }
 		);
 
 		ButtonConfig restOneDayButton = new ButtonConfig (
 			"One day",
-			delegate { setRestTime("one day"); }
+			delegate { setRestTime(1); }
 		);
 
 		ButtonConfig restThreeDaysButton = new ButtonConfig (
 			"Three days",
-			delegate { setRestTime("three days"); }
+			delegate { setRestTime(3); }
+		);
+
+		ButtonConfig restFiveDaysButton = new ButtonConfig (
+			"Five days",
+			delegate { setRestTime(5); }
 		);
 
 		restMenuButtonConfigs.Add (restNoneButton);
