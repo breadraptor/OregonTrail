@@ -130,11 +130,11 @@ public class WorldController
 
 	private void UpdateSeason ()
 	{
-		if (day > seasonLength) {
+		if (day >= seasonLength) {
 			int current = (int)currentSeason;
 			current += 1;
 			currentSeason = (Season)(current % 4);
-			day = 1;
+			day = 0;
 		}
 	}
 
