@@ -77,6 +77,7 @@ public class GameController : MonoBehaviour
 
 	public void StartWorldCoroutine ()
 	{
+		nextUpdate = DateTime.Now.AddSeconds (updateInterval);
 		shouldUpdate = true;
 	}
 
