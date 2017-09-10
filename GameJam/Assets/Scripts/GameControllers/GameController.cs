@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
 
 	public PlayerController player;
 	public WorldController world;
+    public FrontEndManager frontend;
 	Coroutine worldCoroutine;
 
 	double updateInterval;
@@ -41,7 +42,7 @@ public class GameController : MonoBehaviour
 			Season.Summer,
 			0
 		);
-
+        frontend = GameObject.Find("FrontEnd").GetComponent<FrontEndManager>();
 		isResting = false;
 
 		updateInterval = REGULAR_UPDATE_INTERVAL;
@@ -145,5 +146,6 @@ Miles Travelled: {3} miles";
 		));
 		player.Update ();
 		world.Update ();
+        frontend.AssetUpdate();
 	}
 }
