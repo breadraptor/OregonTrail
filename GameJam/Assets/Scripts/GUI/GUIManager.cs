@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class GUIManager : MonoBehaviour
 {
+	private int maxChoicesCount = 8;
 
 	public Font mainFont;
-	private int maxChoicesCount = 8;
 	public GameObject defaultText;
 	public GameObject defaultButton;
 	public GameObject choicesMenu;
@@ -34,6 +34,7 @@ public class GUIManager : MonoBehaviour
 	private ButtonConfig talkToPeopleButtonConfig;
 	private ButtonConfig tradeButtonConfig;
 	private ButtonConfig checkScoreButtonConfig;
+	private ButtonConfig startOverButtonConfig;
 
 	void Start ()
 	{
@@ -47,7 +48,6 @@ public class GUIManager : MonoBehaviour
 		configureUIWithEvent (GUIEvents.GoToMenu);
 
 	}
-
 
 	public void configureUIWithEvent (GUIEvents uiEvent)
 	{
@@ -75,6 +75,9 @@ public class GUIManager : MonoBehaviour
 			break;
 		case GUIEvents.WorldEvent:
 			displayEventMenu ();
+			break;
+		case GUIEvents.PlayerDeath:
+			displayGameOverMenu ();
 			break;
 		default:
 			Debug.Log ("UNRECOGNIZED EVENT: " + uiEvent.ToString ());
@@ -179,6 +182,27 @@ public class GUIManager : MonoBehaviour
 		currentStatusDisplay.SetActive (true);
 	}
 
+	private void displayGameOverMenu() {
+		deactivateAllDisplays ();
+
+		string gameOverStatus = "Game Over\n";
+		if (mainGameController.AtFinalDestination ()) {
+			gameOverStatus += "Congratulations! You've made it to safety!\n";
+		} else {
+			gameOverStatus += "Too bad, you didn't make it... this time!\n";
+		}
+
+		gameOverStatus += "Final score: { TODO }\n";
+
+		updateCurrentStatusDisplay (gameOverStatus);
+		currentStatusDisplay.SetActive (true);
+
+		ArrayList gameOverButtonConfigs = new ArrayList ();
+		gameOverButtonConfigs.Add (startOverButtonConfig);
+		setChoicesMenuWithOptions (gameOverButtonConfigs);
+		choicesMenu.SetActive (true);
+	}
+
 	private void setNewDestination (Location newLocation, int distance)
 	{
 		if (distance == 0) {
@@ -234,6 +258,8 @@ public class GUIManager : MonoBehaviour
 
 	private void displayEventMenu ()
 	{
+		updateLocationTimeDisplay (mainGameController.GetDestinationDescription ());
+		updateCurrentStatusDisplay (mainGameController.GetStatusText ());
 		updateAlertDisplay (eventText);
 		alertDisplay.SetActive (true);
 		alertAsset.SetActive (true);
@@ -280,6 +306,10 @@ public class GUIManager : MonoBehaviour
 		} else {
 			configureUIWithEvent (GUIEvents.GoToMenu);
 		}
+	}
+
+	private void startNewGame() {
+		mainGameController.StartNewGame ();
 	}
 
 	void setChoicesMenuWithOptions (ArrayList buttonConfigs)
@@ -361,7 +391,12 @@ public class GUIManager : MonoBehaviour
 
 		checkScoreButtonConfig = new ButtonConfig (
 			"Final score",
-			delegate { Debug.Log("TODO: Check your final score..."); }
+			delegate { displayGameOverMenu(); }
+		);
+
+		startOverButtonConfig = new ButtonConfig (
+			"Start New Game",
+			delegate { startNewGame(); }
 		);
 
 		///// ###### CONFIGURE JOURNEY SETTINGS BUTTONS ###### /////
@@ -456,7 +491,14 @@ public class GUIManager : MonoBehaviour
 			"Continue",
 			delegate { configureUIWithEvent (GUIEvents.ContinueJourney); }
 		);
+
+		ButtonConfig eventBreakButton = new ButtonConfig (
+			"Take a break",
+			delegate { configureUIWithEvent (GUIEvents.GoToMenu); }
+		);
+
 		eventBaseConfigs.Add (eventContinueButton);
+		eventBaseConfigs.Add (eventBreakButton);
 
 		ButtonConfig mainMenuButtonConfig = new ButtonConfig (
 			"Take a break",

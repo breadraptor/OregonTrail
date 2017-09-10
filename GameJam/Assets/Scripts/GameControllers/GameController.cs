@@ -33,6 +33,16 @@ public class GameController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		populateEvents ();
+		frontEnd = GameObject.FindGameObjectWithTag ("FrontEndManager").GetComponent<FrontEndManager> ();
+		guiMgr = GameObject.FindGameObjectWithTag ("UIManager").GetComponent<GUIManager> ();
+
+		StartNewGame ();
+	}
+
+	public void StartNewGame() {
+		currentDestination = null;
+		distanceToCurrentDestination = 0;
 
 		player = new PlayerController (
 			Pace.Normal,
@@ -49,9 +59,7 @@ public class GameController : MonoBehaviour
 			Season.Summer,
 			1
 		);
-		populateEvents ();
-		frontEnd = GameObject.FindGameObjectWithTag ("FrontEndManager").GetComponent<FrontEndManager> ();
-		guiMgr = GameObject.FindGameObjectWithTag ("UIManager").GetComponent<GUIManager> ();
+
 		isResting = false;
 
 		EnsureInitialDestinationSet ();
@@ -59,6 +67,8 @@ public class GameController : MonoBehaviour
 		updateInterval = REGULAR_UPDATE_INTERVAL;
 		shouldUpdate = false;
 		nextUpdate = DateTime.Now.AddSeconds (updateInterval);
+
+		guiMgr.configureUIWithEvent (GUIEvents.GoToMenu);
 	}
 
 	// Update is called once per frame
@@ -68,34 +78,36 @@ public class GameController : MonoBehaviour
 			if (DateTime.Now >= nextUpdate) {
 				nextUpdate = DateTime.Now.AddSeconds (updateInterval);
 				UpdateWorldAndPlayer ();
-        if (player.currentHealth == Health.Dead) {
-          StopWorldCoroutine();
-          Debug.Log("YOU DIED.");
-        }
-        if (world.eventFlag) {
-          guiMgr.eventText = "";
-          StopWorldCoroutine();
-          //string text = CreateEvent();
-          guiMgr.eventText = CreateEvent();
-          guiMgr.configureUIWithEvent(GUIEvents.WorldEvent);
-          world.eventFlag = false;
-        }
-				if (isResting) {
-					daysToRest -= 1;
-					if (daysToRest < 0) {
-						isResting = false;
-						updateInterval = REGULAR_UPDATE_INTERVAL;
-						guiMgr.configureUIWithEvent (GUIEvents.GoToMenu);
-					} else {
-						guiMgr.updateCurrentStatusDisplay ("Resting for " + (daysToRest + 1) + " more day(s)");
-					}
+				if (player.currentHealth == Health.Dead) {
+					StopWorldCoroutine ();
+					// TODO: Make front end manager show grave stone or something...
+					guiMgr.configureUIWithEvent (GUIEvents.PlayerDeath);
 				} else {
-					distanceToCurrentDestination -= (int)player.pace;
-					guiMgr.updateLocationTimeDisplay (GetDestinationDescription ());
-					if (distanceToCurrentDestination <= 0) {
-						distanceToCurrentDestination = 0;
+					if (world.eventFlag) {
+						guiMgr.eventText = "";
 						StopWorldCoroutine ();
-						guiMgr.configureUIWithEvent (GUIEvents.GoToMenu);
+						//string text = CreateEvent();
+						guiMgr.eventText = CreateEvent ();
+						guiMgr.configureUIWithEvent (GUIEvents.WorldEvent);
+						world.eventFlag = false;
+					}
+					if (isResting) {
+						daysToRest -= 1;
+						if (daysToRest < 0) {
+							isResting = false;
+							updateInterval = REGULAR_UPDATE_INTERVAL;
+							guiMgr.configureUIWithEvent (GUIEvents.GoToMenu);
+						} else {
+							guiMgr.updateCurrentStatusDisplay ("Resting for " + (daysToRest + 1) + " more day(s)");
+						}
+					} else {
+						distanceToCurrentDestination -= (int)player.pace;
+						guiMgr.updateLocationTimeDisplay (GetDestinationDescription ());
+						if (distanceToCurrentDestination <= 0) {
+							distanceToCurrentDestination = 0;
+							StopWorldCoroutine ();
+							guiMgr.configureUIWithEvent (GUIEvents.GoToMenu);
+						}
 					}
 				}
 			}

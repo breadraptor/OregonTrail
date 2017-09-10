@@ -11,7 +11,8 @@ public enum GUIEvents {
 	ChangeRations,
 	StopToRest,
 	HaveRandomConversation,
-  WorldEvent
+ 	WorldEvent,
+	PlayerDeath
 }
 
 public class ButtonConfig {
