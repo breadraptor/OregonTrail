@@ -46,6 +46,15 @@ public class GUIManager : MonoBehaviour {
 		case GUIEvents.DisplaySupplies:
 			displaySuppliesMenu ();
 			break;
+		case GUIEvents.ChangePace:
+			displayPaceMenu ();
+			break;
+		case GUIEvents.ChangeRations:
+			displayRationsMenu ();
+			break;
+		case GUIEvents.StopToRest:
+			displayRestMenu ();
+			break;
 		default:
 			Debug.Log ("UNRECOGNIZED EVENT: " + uiEvent.ToString ());
 			break;
@@ -83,10 +92,35 @@ public class GUIManager : MonoBehaviour {
 	}
 
 	private void displaySuppliesMenu() {
-		updateCurrentStatusDisplay ("This should actually be showing you your supplies...");
+		string suppliesText = mainGameController.GetStatusText ();
+		updateCurrentStatusDisplay (suppliesText);
 		currentStatusDisplay.SetActive (true);
 
 		mainMenuButton.SetActive (true);
+	}
+
+	private void displayPaceMenu() {
+		updateCurrentStatusDisplay ("What travel pace would you like to set?...");
+		currentStatusDisplay.SetActive (true);
+
+		setChoicesMenuWithOptions (paceMenuButtonConfigs);
+		choicesMenu.SetActive (true);
+	}
+
+	private void displayRationsMenu() {
+		updateCurrentStatusDisplay ("What portion size would you like to consume?...");
+		currentStatusDisplay.SetActive (true);
+
+		setChoicesMenuWithOptions (rationMenuButtonConfigs);
+		choicesMenu.SetActive (true);
+	}
+
+	private void displayRestMenu() {
+		updateCurrentStatusDisplay ("How long would you like to rest?...");
+		currentStatusDisplay.SetActive (true);
+
+		setChoicesMenuWithOptions (restMenuButtonConfigs);
+		choicesMenu.SetActive (true);
 	}
 
 	public void updateLocationTimeDisplay(string text) {
@@ -97,9 +131,20 @@ public class GUIManager : MonoBehaviour {
 		currentStatusDisplay.GetComponent<Text> ().text = text;
 	}
 
-	private void configureButton(ButtonConfig config, GameObject button) {
-		button.GetComponentInChildren<Text> ().text = config.displayText;
-		button.GetComponent<Button> ().onClick.AddListener (config.action);
+	private void setPace(Pace pace) {
+		mainGameController.SetPlayerPace (pace);
+		configureUIWithEvent (GUIEvents.GoToMenu);
+	}
+
+	private void setPortions(Portion portion) {
+		mainGameController.SetPlayerPortion (portion);
+		configureUIWithEvent (GUIEvents.GoToMenu);
+	}
+
+	private void setRestTime(string restTime) {
+		Debug.Log ("Resting for " + restTime);
+
+		configureUIWithEvent (GUIEvents.GoToMenu);
 	}
 
 	void setChoicesMenuWithOptions(ArrayList buttonConfigs) {
@@ -126,6 +171,11 @@ public class GUIManager : MonoBehaviour {
 
 			newButtonObj.SetActive (true);
 		}
+	}
+
+	private void configureButton(ButtonConfig config, GameObject button) {
+		button.GetComponentInChildren<Text> ().text = config.displayText;
+		button.GetComponent<Button> ().onClick.AddListener (config.action);
 	}
 
 	private void buildAllButtonConfigs() {
@@ -155,12 +205,93 @@ public class GUIManager : MonoBehaviour {
 			delegate { configureUIWithEvent(GUIEvents.StopToRest); }
 		);
 
-
 		mainMenuButtonConfigs.Add (continueButton);
 		mainMenuButtonConfigs.Add (suppliesButton);
 		mainMenuButtonConfigs.Add (paceButton);
 		mainMenuButtonConfigs.Add (rationsButton);
 		mainMenuButtonConfigs.Add (restButton);
+
+		ButtonConfig paceCrawlingButton = new ButtonConfig (
+			"Crawling",
+			delegate { setPace(Pace.Crawling); }
+		);
+
+		ButtonConfig paceSlowButton = new ButtonConfig (
+			"Slow",
+			delegate { setPace(Pace.Slow); }
+		);
+
+		ButtonConfig paceNormalButton = new ButtonConfig (
+			"Normal",
+			delegate { setPace(Pace.Normal); }
+		);
+
+		ButtonConfig paceQuickButton = new ButtonConfig (
+			"Quick",
+			delegate { setPace(Pace.Quick); }
+		);
+
+		ButtonConfig paceStrenuousButton = new ButtonConfig (
+			"Strenuous",
+			delegate { setPace(Pace.Strenuous); }
+		);
+
+		paceMenuButtonConfigs.Add (paceCrawlingButton);
+		paceMenuButtonConfigs.Add (paceSlowButton);
+		paceMenuButtonConfigs.Add (paceNormalButton);
+		paceMenuButtonConfigs.Add (paceQuickButton);
+		paceMenuButtonConfigs.Add (paceStrenuousButton);
+
+
+		ButtonConfig rationsStarvingButton = new ButtonConfig (
+			"Starving",
+			delegate { setPortions(Portion.Starving); }
+		);
+
+		ButtonConfig rationsMeagerButton = new ButtonConfig (
+			"Meager",
+			delegate { setPortions(Portion.Meager); }
+		);
+
+		ButtonConfig rationsModerateButton = new ButtonConfig (
+			"Moderate",
+			delegate { setPortions(Portion.Moderate); }
+		);
+
+		ButtonConfig rationsNormalButton = new ButtonConfig (
+			"Normal",
+			delegate { setPortions(Portion.Normal); }
+		);
+
+		ButtonConfig rationsPlentifulButton = new ButtonConfig (
+			"Plentiful",
+			delegate { setPortions(Portion.Plentiful); }
+		);
+
+		rationMenuButtonConfigs.Add (rationsStarvingButton);
+		rationMenuButtonConfigs.Add (rationsMeagerButton);
+		rationMenuButtonConfigs.Add (rationsModerateButton);
+		rationMenuButtonConfigs.Add (rationsNormalButton);
+		rationMenuButtonConfigs.Add (rationsPlentifulButton);
+
+		ButtonConfig restNoneButton = new ButtonConfig (
+			"None",
+			delegate { setRestTime("no days"); }
+		);
+
+		ButtonConfig restOneDayButton = new ButtonConfig (
+			"One day.",
+			delegate { setRestTime("one day"); }
+		);
+
+		ButtonConfig restThreeDaysButton = new ButtonConfig (
+			"Three days",
+			delegate { setRestTime("three days"); }
+		);
+
+		restMenuButtonConfigs.Add (restNoneButton);
+		restMenuButtonConfigs.Add (restOneDayButton);
+		restMenuButtonConfigs.Add (restThreeDaysButton);
 
 		ButtonConfig mainMenuButtonConfig = new ButtonConfig (
 			"Take a break",
