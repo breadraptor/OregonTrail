@@ -31,6 +31,8 @@ public class GUIManager : MonoBehaviour {
 
 		buildAllButtonConfigs ();
 
+		mainGameController.EnsureInitialDestinationSet ();
+
 		configureUIWithEvent (GUIEvents.GoToMenu);
 
 	}
@@ -81,10 +83,15 @@ public class GUIManager : MonoBehaviour {
 
 	private void displayMainMenu() {
 		Debug.Log ("Going to menu");
-		updateLocationTimeDisplay ("This displays location\nAND TIME!! WOO");
+		updateLocationTimeDisplay (mainGameController.GetDestinationDescription());
 		locationTimeDisplay.SetActive (true);
 
-		updateCurrentStatusDisplay ("Some status\nSome more status\nI hope this is working...");
+		if (mainGameController.AtCurrentDestination ()) {
+			updateCurrentStatusDisplay (mainGameController.GetLocationDescription ());
+		} else {
+			updateCurrentStatusDisplay (mainGameController.GetStatusText ());
+		}
+			
 		currentStatusDisplay.SetActive (true);
 
 		setChoicesMenuWithOptions (mainMenuButtonConfigs);
@@ -92,12 +99,55 @@ public class GUIManager : MonoBehaviour {
 	}
 
 	private void displayContinueJourneyMenu() {
-		updateCurrentStatusDisplay ("I SWEAR you're continuing your journey right now");
+		if (mainGameController.AtCurrentDestination ()) {
+
+			updateCurrentStatusDisplay ("Where would you like to go?");
+
+			ArrayList nextDestinations = mainGameController.GetNextDestinations ();
+
+			ArrayList destinationOptions = new ArrayList ();
+			ButtonConfig stayButton = new ButtonConfig (
+				"Stay here",
+				delegate { setNewDestination(null, 0); }
+			);
+			destinationOptions.Add (stayButton);
+
+			for(int i = 0; i < nextDestinations.Count; ++i) {
+				Destination destination = (Destination)nextDestinations [i];
+				Location location = Locations.getLocationWithId (destination.id);
+				ButtonConfig destinationButton = new ButtonConfig (
+					location.name + " <- " + destination.distance + "mi.",
+					delegate { setNewDestination(location, destination.distance); }
+				);
+				destinationOptions.Add (destinationButton);
+			}
+
+			setChoicesMenuWithOptions (destinationOptions);
+			choicesMenu.SetActive (true);
+
+		} else {
+			mainGameController.StartWorldCoroutine ();
+			mainMenuButton.SetActive (true);
+		}
+
+		locationTimeDisplay.SetActive (true);
 		currentStatusDisplay.SetActive (true);
+	}
 
-		mainGameController.StartWorldCoroutine ();
+	private void setNewDestination(Location newLocation, int distance) {
+		if (distance == 0) {
+			configureUIWithEvent (GUIEvents.GoToMenu);
+		} else {
+			deactivateAllDisplays ();
+			mainGameController.SetNewDestination (newLocation, distance);
 
-		mainMenuButton.SetActive (true);
+			updateLocationTimeDisplay (mainGameController.GetDestinationDescription ());
+
+			mainGameController.StartWorldCoroutine ();
+			locationTimeDisplay.SetActive (true);
+			currentStatusDisplay.SetActive (true);
+			mainMenuButton.SetActive (true);
+		}
 	}
 
 	private void displaySuppliesMenu() {
