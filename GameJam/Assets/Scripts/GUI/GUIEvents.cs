@@ -10,7 +10,8 @@ public enum GUIEvents {
 	ChangePace,
 	ChangeRations,
 	StopToRest,
-	HaveRandomConversation
+	HaveRandomConversation,
+  WorldEvent
 }
 
 public class ButtonConfig {

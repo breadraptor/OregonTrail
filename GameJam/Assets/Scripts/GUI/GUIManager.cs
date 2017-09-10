@@ -12,7 +12,10 @@ public class GUIManager : MonoBehaviour {
 	public GameObject choicesMenu;
 	public GameObject locationTimeDisplay;
 	public GameObject currentStatusDisplay;
+  public GameObject alertDisplay;
+  public GameObject alertAsset;
 	public GameObject mainMenuButton;
+  public string eventText;
 
 	private GameController mainGameController;
 
@@ -20,8 +23,9 @@ public class GUIManager : MonoBehaviour {
 	ArrayList paceMenuButtonConfigs = new ArrayList();
 	ArrayList rationMenuButtonConfigs = new ArrayList();
 	ArrayList restMenuButtonConfigs = new ArrayList();
+  ArrayList eventBaseConfigs = new ArrayList();
 
-	void Start () {
+  void Start () {
 
 		mainGameController = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameController>();
 
@@ -55,6 +59,9 @@ public class GUIManager : MonoBehaviour {
 		case GUIEvents.StopToRest:
 			displayRestMenu ();
 			break;
+    case GUIEvents.WorldEvent:
+        displayEventMenu();
+        break;
 		default:
 			Debug.Log ("UNRECOGNIZED EVENT: " + uiEvent.ToString ());
 			break;
@@ -67,6 +74,8 @@ public class GUIManager : MonoBehaviour {
 		currentStatusDisplay.SetActive (false);
 		choicesMenu.SetActive (false);
 		mainMenuButton.SetActive (false);
+    alertDisplay.SetActive(false);
+    alertAsset.SetActive(false);
 
 	}
 
@@ -123,6 +132,15 @@ public class GUIManager : MonoBehaviour {
 		choicesMenu.SetActive (true);
 	}
 
+  private void displayEventMenu() {
+    updateAlertDisplay(eventText);
+    alertDisplay.SetActive(true);
+    alertAsset.SetActive(true);
+    setLowerMenuWithOptions(eventBaseConfigs);
+    choicesMenu.SetActive(true);
+    currentStatusDisplay.SetActive(true);
+  }
+
 	public void updateLocationTimeDisplay(string text) {
 		locationTimeDisplay.GetComponent<Text> ().text = text;
 	}
@@ -130,6 +148,10 @@ public class GUIManager : MonoBehaviour {
 	public void updateCurrentStatusDisplay(string text) {
 		currentStatusDisplay.GetComponent<Text> ().text = text;
 	}
+
+  public void updateAlertDisplay(string text) {
+    alertDisplay.GetComponent<Text>().text = text;
+  }
 
 	private void setPace(Pace pace) {
 		mainGameController.SetPlayerPace (pace);
@@ -179,6 +201,30 @@ public class GUIManager : MonoBehaviour {
 		}
 	}
 
+  void setLowerMenuWithOptions(ArrayList buttonConfigs) {
+    Button[] currentButtons = choicesMenu.GetComponentsInChildren<Button>();
+    for (int i = 0; i < currentButtons.Length; ++i) {
+      DestroyImmediate(currentButtons[i].gameObject);
+    }
+
+    float buttonSize = 1.0f / (float)maxChoicesCount;
+
+    for (int i = 0; i < buttonConfigs.Count && i < maxChoicesCount; ++i) {
+      ButtonConfig config = (ButtonConfig)buttonConfigs[i];
+      GameObject newButtonObj = Instantiate(defaultButton, choicesMenu.transform);
+      newButtonObj.name = "Choice Button " + i;
+      RectTransform buttonTransform = newButtonObj.GetComponent<RectTransform>();
+      float anchorPos = 0.5f - (buttonSize * i); // y
+      buttonTransform.anchorMax = new Vector2(1.0f, anchorPos);
+      buttonTransform.anchorMin = new Vector2(0.0f, anchorPos - buttonSize);
+      buttonTransform.offsetMax = Vector2.zero;
+      buttonTransform.offsetMin = Vector2.zero;
+
+      configureButton(config, newButtonObj);
+
+      newButtonObj.SetActive(true);
+    }
+  }
 	private void configureButton(ButtonConfig config, GameObject button) {
 		button.GetComponentInChildren<Text> ().text = config.displayText;
 		button.GetComponent<Button> ().onClick.AddListener (config.action);
@@ -304,8 +350,15 @@ public class GUIManager : MonoBehaviour {
 		restMenuButtonConfigs.Add (restNoneButton);
 		restMenuButtonConfigs.Add (restOneDayButton);
 		restMenuButtonConfigs.Add (restThreeDaysButton);
+    restMenuButtonConfigs.Add(restFiveDaysButton);
 
-		ButtonConfig mainMenuButtonConfig = new ButtonConfig (
+    ButtonConfig eventContinueButton = new ButtonConfig(
+      "Continue",
+      delegate { configureUIWithEvent(GUIEvents.ContinueJourney); }
+      );
+    eventBaseConfigs.Add(eventContinueButton);
+
+    ButtonConfig mainMenuButtonConfig = new ButtonConfig (
 			"Take a break",
 			delegate { configureUIWithEvent (GUIEvents.GoToMenu); }
 		);

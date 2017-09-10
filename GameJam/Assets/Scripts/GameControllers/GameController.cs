@@ -64,8 +64,11 @@ public class GameController : MonoBehaviour
 				nextUpdate = DateTime.Now.AddSeconds (updateInterval);
 				UpdateWorldAndPlayer ();
         if (world.eventFlag) {
+          guiMgr.eventText = "";
           StopWorldCoroutine();
-          CreateEvent();
+          //string text = CreateEvent();
+          guiMgr.eventText = CreateEvent();
+          guiMgr.configureUIWithEvent(GUIEvents.WorldEvent);
           world.eventFlag = false;
         }
 				if (isResting) {
@@ -103,7 +106,7 @@ public class GameController : MonoBehaviour
 		shouldUpdate = false;
 	}
 
-  private void CreateEvent() {
+  private string CreateEvent() {
     //todo should put events in a text file and read that in probably
     int eventIndex = rand.Next(0, 9);
     WorldEvent e = worldEvents[eventIndex];
@@ -161,6 +164,7 @@ public class GameController : MonoBehaviour
       world.day += num;
     }
     Debug.Log(e.result);
+    return e.description + " " + e.result;
   }
 
 	public string GetStatusText ()
