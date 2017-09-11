@@ -75,7 +75,7 @@ public class GameController : MonoBehaviour
 	void Update ()
 	{
 		if (shouldUpdate) {
-			if (DateTime.Now >= nextUpdate) {
+      if (DateTime.Now >= nextUpdate) {
 				nextUpdate = DateTime.Now.AddSeconds (updateInterval);
 				UpdateWorldAndPlayer ();
 				if (player.currentHealth == Health.Dead) {
@@ -132,6 +132,7 @@ public class GameController : MonoBehaviour
 
 	public void StartWorldCoroutine ()
 	{
+    //frontEnd.StartPlayer();
 		frontEnd.AssetUpdate ();
 		guiMgr.updateCurrentStatusDisplay (GetStatusText ());
 		nextUpdate = DateTime.Now.AddSeconds (updateInterval);
@@ -140,7 +141,8 @@ public class GameController : MonoBehaviour
 
 	public void StopWorldCoroutine ()
 	{
-		shouldUpdate = false;
+    //frontEnd.StopPlayer();
+    shouldUpdate = false;
 	}
 
   private string CreateEvent() {

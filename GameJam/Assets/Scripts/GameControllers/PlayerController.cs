@@ -39,6 +39,7 @@ public class PlayerController
 	int healthNum = 100;
 	public int distanceTravelled;
   public string illness = null;
+  private bool gimme;
   System.Random rand = new System.Random();
 
   private int daysSick = 0;
@@ -171,17 +172,24 @@ public class PlayerController
       if (healthScore >= 4 && daysSick >= 3 && num >= 20) {
         // cured for good behavior
         illness = null;
+        gimme = true;
         daysSick = 0;
       }
-      else if ((healthScore < 4 && num >= 80) || (daysSick >= 15)) {
+      else if ((healthScore < 4 && num >= 80) || (daysSick >= 10)) {
         // cured, but you got lucky (or you were sick for long enough)
         illness = null;
         daysSick = 0;
+        gimme = true;
         healthScore -= 2;
       }
       else if (healthScore > 0) {
         // base illness subtraction.
         healthScore -= 15;
+      }
+      else if (currentHealth - 25 <= 0 && gimme){
+        Debug.Log("gimme was used");
+        gimme = false;
+        healthScore -= 20;
       }
       else {
         // stop killing yourself
