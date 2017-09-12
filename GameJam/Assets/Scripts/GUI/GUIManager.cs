@@ -15,7 +15,6 @@ public class GUIManager : MonoBehaviour
 	public GameObject currentStatusDisplay;
 	public GameObject alertDisplay;
 	public GameObject alertAsset;
-	public GameObject mainMenuButton;
 	public string eventText;
 
 	private GameController mainGameController;
@@ -25,6 +24,7 @@ public class GUIManager : MonoBehaviour
 	ArrayList restMenuButtonConfigs = new ArrayList ();
 	ArrayList eventBaseConfigs = new ArrayList ();
 
+	private ButtonConfig takeBreakButtonConfig;
 	private ButtonConfig continueJourneyButtonConfig;
 	private ButtonConfig setOutButtonConfig;
 	private ButtonConfig checkSuppliesButtonConfig;
@@ -35,6 +35,7 @@ public class GUIManager : MonoBehaviour
 	private ButtonConfig tradeButtonConfig;
 	private ButtonConfig checkScoreButtonConfig;
 	private ButtonConfig startOverButtonConfig;
+	private ButtonConfig backButtonConfig;
 
 	void Start ()
 	{
@@ -79,6 +80,9 @@ public class GUIManager : MonoBehaviour
 		case GUIEvents.PlayerDeath:
 			displayGameOverMenu ();
 			break;
+		case GUIEvents.DoTrade:
+			displayTradeMenu();
+			break;
 		default:
 			Debug.Log ("UNRECOGNIZED EVENT: " + uiEvent.ToString ());
 			break;
@@ -91,13 +95,13 @@ public class GUIManager : MonoBehaviour
 		locationTimeDisplay.SetActive (false);
 		currentStatusDisplay.SetActive (false);
 		choicesMenu.SetActive (false);
-		mainMenuButton.SetActive (false);
 		alertDisplay.SetActive (false);
 		alertAsset.SetActive (false);
 
 	}
 
-	private ArrayList getMainMenuButtonConfigs() {
+	private ArrayList getMainMenuButtonConfigs ()
+	{
 		ArrayList mainMenuConfigs = new ArrayList ();
 
 		if (mainGameController.AtFinalDestination ()) {
@@ -125,7 +129,6 @@ public class GUIManager : MonoBehaviour
 
 	private void displayMainMenu ()
 	{
-		Debug.Log ("Going to menu");
 		updateLocationTimeDisplay (mainGameController.GetDestinationDescription ());
 		locationTimeDisplay.SetActive (true);
 
@@ -138,7 +141,6 @@ public class GUIManager : MonoBehaviour
 		currentStatusDisplay.SetActive (true);
 
 		setChoicesMenuWithOptions (getMainMenuButtonConfigs());
-		choicesMenu.SetActive (true);
 	}
 
 	private void displayContinueJourneyMenu ()
@@ -151,31 +153,27 @@ public class GUIManager : MonoBehaviour
 
 			ArrayList destinationOptions = new ArrayList ();
 			ButtonConfig stayButton = new ButtonConfig (
-				                          "Stay here",
-				                          delegate {
-					setNewDestination (null, 0);
-				}
-			                          );
+				"Stay here",
+				delegate { setNewDestination (null, 0); }
+			);
 			destinationOptions.Add (stayButton);
 
 			for (int i = 0; i < nextDestinations.Count; ++i) {
 				Destination destination = (Destination)nextDestinations [i];
 				Location location = Locations.getLocationWithId (destination.id);
 				ButtonConfig destinationButton = new ButtonConfig (
-					                                 location.name + " <- " + destination.distance + "mi.",
-					                                 delegate {
-						setNewDestination (location, destination.distance);
-					}
-				                                 );
+					location.name + " <- " + destination.distance + "mi.",
+					delegate { setNewDestination (location, destination.distance); }
+				);
 				destinationOptions.Add (destinationButton);
 			}
 
 			setChoicesMenuWithOptions (destinationOptions);
-			choicesMenu.SetActive (true);
-
 		} else {
 			mainGameController.StartWorldCoroutine ();
-			mainMenuButton.SetActive (true);
+			ArrayList buttonConfigs = new ArrayList ();
+			buttonConfigs.Add (takeBreakButtonConfig);
+			setChoicesMenuWithOptions (buttonConfigs);
 		}
 
 		locationTimeDisplay.SetActive (true);
@@ -200,7 +198,6 @@ public class GUIManager : MonoBehaviour
 		ArrayList gameOverButtonConfigs = new ArrayList ();
 		gameOverButtonConfigs.Add (startOverButtonConfig);
 		setChoicesMenuWithOptions (gameOverButtonConfigs);
-		choicesMenu.SetActive (true);
 	}
 
 	private void setNewDestination (Location newLocation, int distance)
@@ -216,7 +213,10 @@ public class GUIManager : MonoBehaviour
 			mainGameController.StartWorldCoroutine ();
 			locationTimeDisplay.SetActive (true);
 			currentStatusDisplay.SetActive (true);
-			mainMenuButton.SetActive (true);
+
+			ArrayList buttonConfigs = new ArrayList ();
+			buttonConfigs.Add (takeBreakButtonConfig);
+			setChoicesMenuWithOptions (buttonConfigs);
 		}
 	}
 
@@ -226,7 +226,9 @@ public class GUIManager : MonoBehaviour
 		updateCurrentStatusDisplay (suppliesText);
 		currentStatusDisplay.SetActive (true);
 
-		mainMenuButton.SetActive (true);
+		ArrayList buttonConfigs = new ArrayList ();
+		buttonConfigs.Add (backButtonConfig);
+		setChoicesMenuWithOptions (buttonConfigs);
 	}
 
 	private void displayPaceMenu ()
@@ -235,7 +237,6 @@ public class GUIManager : MonoBehaviour
 		currentStatusDisplay.SetActive (true);
 
 		setChoicesMenuWithOptions (paceMenuButtonConfigs);
-		choicesMenu.SetActive (true);
 	}
 
 	private void displayRationsMenu ()
@@ -244,7 +245,6 @@ public class GUIManager : MonoBehaviour
 		currentStatusDisplay.SetActive (true);
 
 		setChoicesMenuWithOptions (rationMenuButtonConfigs);
-		choicesMenu.SetActive (true);
 	}
 
 	private void displayRestMenu ()
@@ -253,7 +253,6 @@ public class GUIManager : MonoBehaviour
 		currentStatusDisplay.SetActive (true);
 
 		setChoicesMenuWithOptions (restMenuButtonConfigs);
-		choicesMenu.SetActive (true);
 	}
 
 	private void displayEventMenu ()
@@ -264,8 +263,50 @@ public class GUIManager : MonoBehaviour
 		alertDisplay.SetActive (true);
 		alertAsset.SetActive (true);
 		setChoicesMenuWithOptions (eventBaseConfigs);
-		choicesMenu.SetActive (true);
 		currentStatusDisplay.SetActive (true);
+	}
+
+	private void displayTradeMenu()
+	{
+		ArrayList optionsButtonConfigs = new ArrayList ();
+
+		TradeEvent trade = mainGameController.GetRandomTradeEvent ();
+
+		if (trade.realTrade) {
+			if (trade.canAfford) {
+				ButtonConfig agreeButton = new ButtonConfig (
+					                           "Agree",
+					                           delegate {
+						mainGameController.ResolveTradeEvent (trade);
+						configureUIWithEvent (GUIEvents.GoToMenu);
+					}
+				);
+				ButtonConfig noThanksButton = new ButtonConfig (
+					"No thanks",
+					delegate { configureUIWithEvent(GUIEvents.GoToMenu); }
+				);
+				optionsButtonConfigs.Add (agreeButton);
+				optionsButtonConfigs.Add (noThanksButton);
+			} else {
+				ButtonConfig cantButton = new ButtonConfig (
+					"Can't afford, nevermind",
+					delegate { configureUIWithEvent(GUIEvents.GoToMenu); }
+				);
+				optionsButtonConfigs.Add (cantButton);
+			}
+
+		} else {
+			ButtonConfig tooBadButton = new ButtonConfig (
+				"Nevermind",
+				delegate { configureUIWithEvent(GUIEvents.GoToMenu); }
+			);
+			optionsButtonConfigs.Add (tooBadButton);
+		}
+
+		updateCurrentStatusDisplay (trade.tradeText);
+		currentStatusDisplay.SetActive (true);
+
+		setChoicesMenuWithOptions (optionsButtonConfigs);
 	}
 
 	public void updateLocationTimeDisplay (string text)
@@ -314,7 +355,6 @@ public class GUIManager : MonoBehaviour
 
 	void setChoicesMenuWithOptions (ArrayList buttonConfigs)
 	{
-
 		Button[] currentButtons = choicesMenu.GetComponentsInChildren<Button> ();
 		for (int i = 0; i < currentButtons.Length; ++i) {
 			DestroyImmediate (currentButtons [i].gameObject);
@@ -338,6 +378,8 @@ public class GUIManager : MonoBehaviour
 
 			newButtonObj.SetActive (true);
 		}
+
+		choicesMenu.SetActive (true);
 	}
 
 	private void configureButton (ButtonConfig config, GameObject button)
@@ -386,7 +428,7 @@ public class GUIManager : MonoBehaviour
 
 		tradeButtonConfig = new ButtonConfig (
 			"Trade with somebody",
-			delegate { Debug.Log("TODO: Trade with people..."); }
+			delegate { configureUIWithEvent(GUIEvents.DoTrade); }
 		);
 
 		checkScoreButtonConfig = new ButtonConfig (
@@ -500,11 +542,14 @@ public class GUIManager : MonoBehaviour
 		eventBaseConfigs.Add (eventContinueButton);
 		eventBaseConfigs.Add (eventBreakButton);
 
-		ButtonConfig mainMenuButtonConfig = new ButtonConfig (
+		takeBreakButtonConfig = new ButtonConfig (
 			"Take a break",
 			delegate { configureUIWithEvent (GUIEvents.GoToMenu); }
 		);
 
-		configureButton (mainMenuButtonConfig, mainMenuButton);
+		backButtonConfig = new ButtonConfig (
+			"Back",
+			delegate { configureUIWithEvent(GUIEvents.GoToMenu); }
+		);
 	}
 }

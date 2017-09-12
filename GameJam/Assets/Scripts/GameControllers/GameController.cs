@@ -47,9 +47,9 @@ public class GameController : MonoBehaviour
 		player = new PlayerController (
 			Pace.Normal,
 			Portion.Normal,
-			2000,
-			200,
-			200
+			30,
+			5,
+			5
 		);
 
 		world = new WorldController (
@@ -141,77 +141,117 @@ public class GameController : MonoBehaviour
 
 	public void StopWorldCoroutine ()
 	{
-    //frontEnd.StopPlayer();
-    shouldUpdate = false;
+    	//frontEnd.StopPlayer();
+    	shouldUpdate = false;
 	}
 
-  private string CreateEvent() {
-    //todo should put events in a text file and read that in probably
-    int eventIndex = rand.Next(0, 9);
-    WorldEvent e = worldEvents[eventIndex];
-    if (e.resource == "any") {
-      // todo make this able to affect more than one resource
-      int num = rand.Next(1, 2);
-      if (num == 1) {
-        e.resource = "rations";
-      }
-      else {
-        e.resource = "scrap";
-      }  
-    }
-    if (e.resource == "rations") {
-      int num = rand.Next(3, 10);
-      if (e.good) {
-        e.result = "You gain " + num + " rations.";
-        player.currentRations += num;
-      }
-      else {
-        e.result = "You lose " + num + " rations.";
-        player.currentRations -= num;
-      }
-    }
-    else if (e.resource == "scrap") {
-      int num = rand.Next(5, 15);
-      if (e.good) {
-        e.result = "You gain " + num + " scrap.";
-        player.currentScrap += num;
-      }
-      else {
-        e.result = "You lose " + num + " scrap.";
-        player.currentScrap -= num;
-      }
-    }
-    else if (e.resource == "ammo") {
-      int num = rand.Next(10, 30);
-      if (e.good) {
-        e.result = "You gain " + num + " ammo.";
-        player.currentAmmo += num;
-      }
-      else {
-        e.result = "You lose " + num + " ammo.";
-        player.currentAmmo -= num;
-      }
-    }
-    else if (e.resource == "health" && player.illness == null) {
-      int num = rand.Next(1, 3);
-      if (num == 1) {
-        player.illness = "twengies";
-      }
-      else if (num == 2) {
-        player.illness = "dysentery";
-      }
-      else {
-        player.illness = "loon eye";
-      }
-      e.result = player.illness + ".";
-    }
-    else if (e.resource == "time") {
-      int num = rand.Next(1, 5);
-      e.result = "You lose " + num + " day(s).";
-      world.day += num;
-    }
-    return e.description + " " + e.result;
-  }
+	public void ResolveTradeEvent(TradeEvent trade) {
+		switch (trade.rewardType) {
+		case ResourceTypes.Ammo:
+		case ResourceTypes.Scrap:
+		case ResourceTypes.Rations:
+			player.ModifyResource (trade.rewardAmount, trade.rewardType);
+			break;
+		case ResourceTypes.Medicine:
+			player.ModifyHealth (trade.rewardAmount);
+			break;
+		}
+
+		player.ModifyResource (-trade.costAmount, trade.costType);
+	}
+
+	public TradeEvent GetRandomTradeEvent() {
+		if (CanTrade ()) {
+			ArrayList costs = new ArrayList ();
+			costs.Add (ResourceTypes.Rations);
+			costs.Add (ResourceTypes.Ammo);
+			costs.Add (ResourceTypes.Scrap);
+			costs.Add (ResourceTypes.Scrap); // Duplicate scrap to increase odds
+			int randomCostIndex = UnityEngine.Random.Range(0, costs.Count);
+			ResourceTypes costType = (ResourceTypes)costs [randomCostIndex];
+
+			ArrayList rewards = new ArrayList ();
+			rewards.Add (ResourceTypes.Rations);
+			rewards.Add (ResourceTypes.Ammo);
+			rewards.Add (ResourceTypes.Scrap);
+			rewards.Add (ResourceTypes.Medicine);
+			rewards.Remove (costType);
+
+			int randomRewardIndex = UnityEngine.Random.Range (0, rewards.Count);
+			ResourceTypes rewardType = (ResourceTypes)rewards [randomRewardIndex];
+
+			int rewardAmount = UnityEngine.Random.Range (1, ((int)currentDestination.tradeValue * 3));
+			int costAmount = rewardAmount + UnityEngine.Random.Range (1, currentDestination.tradeValue);
+
+			bool canAfford = player.GetResource (costType) >= costAmount;
+
+			string tradeMessage = "You find someone willing to trade " + rewardAmount + " " + rewardType.ToString() + " for " + costAmount + " " + costType.ToString();
+
+			return new TradeEvent (true, canAfford, tradeMessage, costType, costAmount, rewardType, rewardAmount);
+		} else {
+			string noTradeMessage = "You can't find anyone who wants to trade.";
+			return new TradeEvent (false, false, noTradeMessage, ResourceTypes.TYPE_COUNT, 0, ResourceTypes.TYPE_COUNT, 0);
+		}
+	}
+
+	private string CreateEvent ()
+	{
+		//todo should put events in a text file and read that in probably
+		int eventIndex = rand.Next (0, 9);
+		WorldEvent e = worldEvents [eventIndex];
+		if (e.resource == "any") {
+			// todo make this able to affect more than one resource
+			int num = rand.Next (1, 2);
+			if (num == 1) {
+				e.resource = "rations";
+			} else {
+				e.resource = "scrap";
+			}  
+		}
+		if (e.resource == "rations") {
+			int num = rand.Next (3, 10);
+			if (e.good) {
+				e.result = "You gain " + num + " rations.";
+				player.ModifyResource (num, ResourceTypes.Rations);
+			} else {
+				e.result = "You lose " + num + " rations.";
+				player.ModifyResource (-num, ResourceTypes.Rations);
+			}
+		} else if (e.resource == "scrap") {
+			int num = rand.Next (5, 15);
+			if (e.good) {
+				e.result = "You gain " + num + " scrap.";
+				player.ModifyResource (num, ResourceTypes.Scrap);
+			} else {
+				e.result = "You lose " + num + " scrap.";
+				player.ModifyResource (-num, ResourceTypes.Scrap);
+			}
+		} else if (e.resource == "ammo") {
+			int num = rand.Next (10, 30);
+			if (e.good) {
+				e.result = "You gain " + num + " ammo.";
+				player.ModifyResource (num, ResourceTypes.Ammo);
+			} else {
+				e.result = "You lose " + num + " ammo.";
+				player.ModifyResource (-num, ResourceTypes.Ammo);
+			}
+		} else if (e.resource == "health" && player.illness == null) {
+			int num = rand.Next (1, 3);
+			if (num == 1) {
+				player.illness = "twengies";
+			} else if (num == 2) {
+				player.illness = "dysentery";
+			} else {
+				player.illness = "loon eye";
+			}
+			e.result = player.illness + ".";
+		} else if (e.resource == "time") {
+			int num = rand.Next (1, 5);
+			e.result = "You lose " + num + " day(s).";
+			world.day += num;
+		}
+		return e.description + " " + e.result;
+	}
 
 	public string GetStatusText ()
 	{
@@ -224,7 +264,7 @@ Miles Travelled: {3} miles";
 			fmtString,
 			dateString,
 			player.currentHealth,
-			player.currentRations,
+			player.GetResource(ResourceTypes.Rations),
 			player.distanceTravelled
 		);
 	}
@@ -269,7 +309,7 @@ Miles Travelled: {3} miles";
 	}
 
 	public bool CanTrade() {
-		return AtCurrentDestination () && currentDestination.tradeValue > 0;
+		return AtCurrentDestination() && currentDestination.tradeValue > 0;
 	}
 
 	public void SetNewDestination (Location newLocation, int distance)
@@ -341,5 +381,26 @@ class WorldEvent
 		this.description = description;
 		this.resource = resource; 
 		this.good = good; //true is good, false is bad
+	}
+}
+
+public class TradeEvent
+{
+	public bool realTrade; // false means no one wants to trade
+	public bool canAfford;
+	public string tradeText;
+	public ResourceTypes costType;
+	public int costAmount;
+	public ResourceTypes rewardType;
+	public int rewardAmount;
+
+	public TradeEvent(bool realTradeEvent, bool canAffordTrade, string tradeEventText, ResourceTypes tradeCostType, int tradeCostAmount, ResourceTypes tradeRewardType, int tradeRewardAmount) {
+		realTrade = realTradeEvent;
+		canAfford = canAffordTrade;
+		tradeText = tradeEventText;
+		costType = tradeCostType;
+		costAmount = tradeCostAmount;
+		rewardType = tradeRewardType;
+		rewardAmount = tradeRewardAmount;
 	}
 }
