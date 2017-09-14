@@ -1,0 +1,265 @@
+{
+	"unknownLocationId": "UNKNOWN",
+	"startingLocationId": "old_festerland",
+	"finalLocationId": "crows_rest",
+	"locations": [{
+			"name": "Old Festerland",
+			"description": "This 'city' is built on the edge of an old, stinking swamp.",
+			"id": "old_festerland",
+			"tradeValue": 8,
+			"destinations": [{
+					"id": "shambles",
+					"distance": 350
+				},
+				{
+					"id": "the_hanging_fort",
+					"distance": 500
+				}
+			],
+			"textBlurbs": [
+				"A young woman garbed for travel stops to talk with you. \"Stock up first if you're heading to The Hanging Fort. It's a long road.\"",
+				"An old man, half caked in swamp muck eyes you with suspicion before moving on wordlessly.",
+				"An addled scrapper shuffles up to you, his whole body twitching. \"Hey there traveler, you need any...\" is all he gets out before being shooed away by a shopkeeper.",
+				"A guard eyes you, a look of disdain on her face. \"Don't start any trouble, and move along.\""
+			]
+		},
+		{
+			"name": "Shambles",
+			"description": "A relatively new settlement, it is built of scrap from the old world.",
+			"id": "shambles",
+			"tradeValue": 2,
+			"destinations": [{
+					"id": "flint",
+					"distance": 600
+				},
+				{
+					"id": "downstone",
+					"distance": 840
+				}
+			],
+			"textBlurbs": [
+				"TextBlurbShambles1",
+				"TextBlurbShambles2"
+			]
+		},
+		{
+			"name": "Flint",
+			"description": "Built out of the ruins of an old mining town, though the mines have run dry.",
+			"id": "flint",
+			"tradeValue": 2,
+			"destinations": [{
+				"id": "crossroads",
+				"distance": 520
+			}],
+			"textBlurbs": [
+				"TextBlurbFlint1",
+				"TextBlurbFlint2"
+			]
+		},
+		{
+			"name": "Crossroads",
+			"description": "More of a giant market than town, many caravans pass through here.",
+			"id": "crossroads",
+			"tradeValue": 10,
+			"destinations": [{
+				"id": "lost_pass",
+				"distance": 830
+			}],
+			"textBlurbs": [
+				"TextBlurbCrossroads1",
+				"TextBlurbCrossroads2"
+			]
+		},
+		{
+			"name": "Lost Pass",
+			"description": "Along a dangerous route over the mountains. Many travelers don't make it this far.",
+			"id": "lost_pass",
+			"tradeValue": 0,
+			"destinations": [{
+				"id": "crows_rest",
+				"distance": 615
+			}],
+			"textBlurbs": [
+				"TextBlurbLostPass1",
+				"TextBlurbLostPass2"
+			]
+		},
+		{
+			"name": "Downstone",
+			"description": "The only remnant of what was here before, was a weathered sign bearing the name.",
+			"id": "downstone",
+			"tradeValue": 4,
+			"destinations": [{
+					"id": "hangedman",
+					"distance": 730
+				},
+				{
+					"id": "last_bullet",
+					"distance": 900
+				}
+			],
+			"textBlurbs": [
+				"TextBlurbDownstone1",
+				"TextBlurbDownstone2"
+			]
+		},
+		{
+			"name": "Hangedman",
+			"description": "Home to a militant conclave, several dead bodies hang from the gates wearing signs describing their crimes.",
+			"id": "hangedman",
+			"tradeValue": 2,
+			"destinations": [{
+				"id": "crows_rest",
+				"distance": 885
+			}],
+			"textBlurbs": [
+				"TextBlurbHangedman1",
+				"TextBlurbHangedman2"
+			]
+		},
+		{
+			"name": "Last Bullet",
+			"description": "Established by a hunter, at the site of his most harrowing adventure.",
+			"id": "last_bullet",
+			"tradeValue": 5,
+			"destinations": [{
+				"id": "crows_rest",
+				"distance": 820
+			}],
+			"textBlurbs": [
+				"TextBlurbLastBullet1",
+				"TextBlurbLastBullet2"
+			]
+		},
+		{
+			"name": "The Hanging Fort",
+			"description": "A bustling community of farmers, no one knows how it got its name.",
+			"id": "the_hanging_fort",
+			"tradeValue": 2,
+			"destinations": [{
+					"id": "long_roads_rest",
+					"distance": 1865
+				},
+				{
+					"id": "silver_gulley",
+					"distance": 855
+				},
+				{
+					"id": "shatter_pass",
+					"distance": 630
+				}
+			],
+			"textBlurbs": [
+				"TextBlurbTheHangingFort1",
+				"TextBlurbTheHangingFort2"
+			]
+		},
+		{
+			"name": "Long Road's Rest",
+			"description": "This waystop serves the few survivors of the Long Road.",
+			"id": "long_roads_rest",
+			"tradeValue": 6,
+			"destinations": [{
+				"id": "crows_rest",
+				"distance": 430
+			}],
+			"textBlurbs": [
+				"TextBlurbLongRoadsRest1",
+				"TextBlurbLongRoadsRest2"
+			]
+		},
+		{
+			"name": "Silver Gulley",
+			"description": "The surrounding hills practically glitter with the now useless old world wealth.",
+			"id": "silver_gulley",
+			"tradeValue": 3,
+			"destinations": [{
+				"id": "lake_fishbone",
+				"distance": 920
+			}],
+			"textBlurbs": [
+				"TextBlurbSilverGulley1",
+				"TextBlurbSilverGulley2"
+			]
+		},
+		{
+			"name": "Lake Fishbone",
+			"description": "A once bustling fishing town, now clinging to a lake too acidic for life.",
+			"id": "lake_fishbone",
+			"tradeValue": 1,
+			"destinations": [{
+				"id": "crows_rest",
+				"distance": 845
+			}],
+			"textBlurbs": [
+				"TextBlurbLakeFishbone1",
+				"TextBlurbLakeFishbone2"
+			]
+		},
+		{
+			"name": "Shatter Pass",
+			"description": "This settlment clings to life in a mountain range devestated by earthquakes.",
+			"id": "shatter_pass",
+			"tradeValue": 0,
+			"destinations": [{
+				"id": "the_deeps",
+				"distance": 620
+			}],
+			"textBlurbs": [
+				"TextBlurbShatterPass1",
+				"TextBlurbShatterPass2"
+			]
+		},
+		{
+			"name": "The Deeps",
+			"description": "This place marks the entrance to a series of old mining caves.",
+			"id": "the_deeps",
+			"tradeValue": 2,
+			"destinations": [{
+				"id": "lost_pass",
+				"distance": 440
+			}],
+			"textBlurbs": [
+				"TextBlurbTheDeeps1",
+				"TextBlurbTheDeeps2"
+			]
+		},
+		{
+			"name": "Sunrise City",
+			"description": "A golden city on a hilltop, overrun with corruption and crime.",
+			"id": "sunrise_city",
+			"tradeValue": 8,
+			"destinations": [{
+				"id": "crows_rest",
+				"distance": 540
+			}],
+			"textBlurbs": [
+				"TextBlurbSunriseCity1",
+				"TextBlurbSunriseCity2"
+			]
+		},
+		{
+			"name": "Crow's Rest",
+			"description": "A city that's gotten its legs under it. There is a functioning government and power grid.",
+			"id": "crows_rest",
+			"tradeValue": 0,
+			"destinations": [],
+			"textBlurbs": [
+				"\"Another traveler!\" a young woman exclaims excitedly. \"You must tell us of your adventures!\""
+			]
+		},
+		{
+			"name": "UNKNOWN LOCATION",
+			"description": "YOU SHOULD NOT BE ABLE TO GET HERE",
+			"id": "UNKNOWN",
+			"tradeValue": 0,
+			"destinations": [{
+				"id": "UNKNOWN",
+				"distance": 0
+			}],
+			"textBlurbs": [
+				"An eerie voice whispers from a shadowy alley, \"This place is not real. You are simply a figment of light, dancing on invisible marionette strings.\""
+			]
+		}
+	]
+}

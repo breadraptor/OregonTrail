@@ -116,8 +116,7 @@ public class GameController : MonoBehaviour
 
 	public void EnsureInitialDestinationSet() {
 		if (currentDestination == null) {
-			Locations.init ();
-			currentDestination = Locations.getStartingLocation ();
+			currentDestination = LocationsManager.getStartingLocation ();
 			distanceToCurrentDestination = 0;
 		}
 	}
@@ -305,7 +304,7 @@ Miles Travelled: {3} miles";
 	}
 
 	public bool AtFinalDestination() {
-		return AtCurrentDestination () && Locations.locationIsFinal (currentDestination.id);
+		return AtCurrentDestination () && LocationsManager.locationIsFinal (currentDestination.id);
 	}
 
 	public bool CanTrade() {
@@ -318,13 +317,17 @@ Miles Travelled: {3} miles";
 		distanceToCurrentDestination = distance;
 	}
 
-	public ArrayList GetNextDestinations ()
+	public List<Destination> GetNextDestinations ()
 	{
 		return currentDestination.destinations;
 	}
 
 	public string GetLocationDescription() {
 		return currentDestination.description;
+	}
+
+	public List<String> GetTextBlurbs() {
+		return currentDestination.textBlurbs;
 	}
 
 	public string GetDestinationDescription() {

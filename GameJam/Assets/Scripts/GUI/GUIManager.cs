@@ -83,6 +83,9 @@ public class GUIManager : MonoBehaviour
 		case GUIEvents.DoTrade:
 			displayTradeMenu();
 			break;
+		case GUIEvents.HaveRandomConversation:
+			displayTextBlurb ();
+			break;
 		default:
 			Debug.Log ("UNRECOGNIZED EVENT: " + uiEvent.ToString ());
 			break;
@@ -149,7 +152,7 @@ public class GUIManager : MonoBehaviour
 
 			updateCurrentStatusDisplay ("Where would you like to go?");
 
-			ArrayList nextDestinations = mainGameController.GetNextDestinations ();
+			List<Destination> nextDestinations = mainGameController.GetNextDestinations ();
 
 			ArrayList destinationOptions = new ArrayList ();
 			ButtonConfig stayButton = new ButtonConfig (
@@ -160,7 +163,7 @@ public class GUIManager : MonoBehaviour
 
 			for (int i = 0; i < nextDestinations.Count; ++i) {
 				Destination destination = (Destination)nextDestinations [i];
-				Location location = Locations.getLocationWithId (destination.id);
+				Location location = LocationsManager.getLocationWithId (destination.id);
 				ButtonConfig destinationButton = new ButtonConfig (
 					location.name + " <- " + destination.distance + "mi.",
 					delegate { setNewDestination (location, destination.distance); }
@@ -309,6 +312,26 @@ public class GUIManager : MonoBehaviour
 		setChoicesMenuWithOptions (optionsButtonConfigs);
 	}
 
+	public void displayTextBlurb() {
+		List<string> blurbs = mainGameController.GetTextBlurbs ();
+		int textBlurbIndex = UnityEngine.Random.Range (0, blurbs.Count * 2);
+		if (textBlurbIndex >= blurbs.Count) {
+			updateCurrentStatusDisplay ("You don't find anyone willing to talk to you.");
+		} else {
+			updateCurrentStatusDisplay (blurbs [textBlurbIndex]);
+		}
+		currentStatusDisplay.SetActive (true);
+
+		ArrayList conversationButtons = new ArrayList ();
+		ButtonConfig leaveButton = new ButtonConfig (
+			"Leave",
+			delegate { configureUIWithEvent(GUIEvents.GoToMenu); }
+		);
+		conversationButtons.Add (leaveButton);
+		setChoicesMenuWithOptions (conversationButtons);
+		choicesMenu.SetActive (true);
+	}
+
 	public void updateLocationTimeDisplay (string text)
 	{
 		locationTimeDisplay.GetComponent<Text> ().text = text;
@@ -423,7 +446,7 @@ public class GUIManager : MonoBehaviour
 
 		talkToPeopleButtonConfig = new ButtonConfig (
 			"Talk to somebody",
-			delegate { Debug.Log("TODO: Talk to people..."); }
+			delegate { configureUIWithEvent (GUIEvents.HaveRandomConversation); }
 		);
 
 		tradeButtonConfig = new ButtonConfig (
