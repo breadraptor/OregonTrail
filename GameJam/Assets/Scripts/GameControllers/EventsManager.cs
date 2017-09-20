@@ -91,41 +91,22 @@ public class EventValue {
 	private int maxValue;
 
 	private ResourceTypes _resourceType = ResourceTypes.TYPE_COUNT;
-	public ResourceTypes getResourceType() {
-		if (_resourceType == ResourceTypes.TYPE_COUNT) {
-			_resourceType = (ResourceTypes)Enum.Parse (typeof(ResourceTypes), type);
+	public ResourceTypes resourceType {
+		get {
+			if (_resourceType == ResourceTypes.TYPE_COUNT) {
+				_resourceType = (ResourceTypes)Enum.Parse (typeof(ResourceTypes), type);
+			}
+			return _resourceType;
 		}
-		return _resourceType;
 	}
-//	public ResourceTypes resourceType {
-//		get {
-//			Debug.Log ("TESTING");
-//			if (_resourceType == ResourceTypes.TYPE_COUNT) {
-//				_resourceType = (ResourceTypes)Enum.Parse (typeof(ResourceTypes), type);
-//			}
-//			return _resourceType;
-//		}
-//		set {
-//			_resourceType = value;
-//		}
-//	}
 
 	private int _resourceValue = int.MinValue;
-	public int getResourceValue() {
-		if (_resourceValue == int.MinValue) {
-			_resourceValue = UnityEngine.Random.Range (minValue, maxValue);
+	public int resourceValue {
+		get {
+			if (_resourceValue == int.MinValue) {
+				_resourceValue = UnityEngine.Random.Range (minValue, maxValue);
+			}
+			return _resourceValue;
 		}
-		return _resourceValue;
 	}
-//	public int resourceValue {
-//		get {
-//			if (underlyingValue == int.MinValue) {
-//				underlyingValue = UnityEngine.Random.Range (minValue, maxValue);
-//			}
-//			return underlyingValue;
-//		}
-//		set {
-//			underlyingValue = value;
-//		}
-//	}
 }

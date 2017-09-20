@@ -161,25 +161,25 @@ public class GameController : MonoBehaviour
 	public void ResolveEventOption(EventOption option) {
 		for (int r = 0; r < option.rewardIds.Count; ++r) {
 			EventValue reward = EventsManager.getEventValue (option.rewardIds [r]);
-			switch (reward.getResourceType()) {
+			switch (reward.resourceType) {
 			case ResourceTypes.Ammo:
 			case ResourceTypes.Scrap:
 			case ResourceTypes.Rations:
-				player.ModifyResource (reward.getResourceValue(), reward.getResourceType());
+				player.ModifyResource (reward.resourceValue, reward.resourceType);
 				break;
 			case ResourceTypes.Medicine:
-				player.ModifyHealth (reward.getResourceValue());
+				player.ModifyHealth (reward.resourceValue);
 				break;
 			}
 		}
 
 		for (int c = 0; c < option.costIds.Count; ++c) {
 			EventValue cost = EventsManager.getEventValue (option.costIds [c]);
-			switch (cost.getResourceType()) {
+			switch (cost.resourceType) {
 			case ResourceTypes.Ammo:
 			case ResourceTypes.Scrap:
 			case ResourceTypes.Rations:
-				player.ModifyResource (-cost.getResourceValue(), cost.getResourceType());
+				player.ModifyResource (-cost.resourceValue, cost.resourceType);
 				break;
 			case ResourceTypes.Medicine:
 				// TODO: Can we _cost_ health?

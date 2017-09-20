@@ -293,7 +293,7 @@ public class GUIManager : MonoBehaviour
 				displayText += " Rewards\n";
 				for (int r = 0; r < option.rewardIds.Count; ++r) {
 					EventValue reward = EventsManager.getEventValue (option.rewardIds [r]);
-					displayText += "   " + reward.getResourceType().toUpperString() + ": " + reward.getResourceValue() + "\n";
+					displayText += "   " + reward.resourceType.toUpperString() + ": " + reward.resourceValue + "\n";
 				}
 			}
 			bool canAfford = true;
@@ -302,7 +302,7 @@ public class GUIManager : MonoBehaviour
 				for (int c = 0; c < option.costIds.Count; ++c) {
 					EventValue cost = EventsManager.getEventValue (option.costIds [c]);
 					canAfford &= mainGameController.playerCanAffordCost (cost);
-					displayText += "   " + cost.getResourceType().toUpperString () + ": " + cost.getResourceValue() + "\n";
+					displayText += "   " + cost.resourceType.toUpperString () + ": " + cost.resourceValue + "\n";
 				}
 			}
 
@@ -317,7 +317,7 @@ public class GUIManager : MonoBehaviour
 				buttonText,
 				delegate {
 					mainGameController.ResolveEventOption (option);
-					if(option.nextStepId != null && option.nextStepId != "") {
+					if(option.nextStepId != null && option.nextStepId != "" && canAfford) {
 						EventStep nextStep = EventsManager.getEvent (option.nextStepId);
 						updateEventMenuToStep (nextStep);
 					} else {

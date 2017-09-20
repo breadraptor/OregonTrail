@@ -249,7 +249,7 @@ public class PlayerController
 	}
 
 	public bool canAffordEventCost(EventValue cost) {
-		return (int)resources [cost.getResourceType()] >= cost.getResourceValue();
+		return (int)resources [cost.resourceType] >= cost.resourceValue;
 	}
 }
 
