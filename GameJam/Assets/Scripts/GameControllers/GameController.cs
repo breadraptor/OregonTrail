@@ -49,11 +49,10 @@ public class GameController : MonoBehaviour
 			Portion.Normal,
 			30,
 			5,
-			5
+			25
 		);
 
 		world = new WorldController (
-			0,
 			10,
 			Weather.Clear,
 			Season.Summer,
@@ -159,6 +158,59 @@ public class GameController : MonoBehaviour
 		player.ModifyResource (-trade.costAmount, trade.costType);
 	}
 
+	public void ResolveEventOption(EventOption option) {
+		for (int r = 0; r < option.rewardIds.Count; ++r) {
+			EventValue reward = EventsManager.getEventValue (option.rewardIds [r]);
+			switch (reward.getResourceType()) {
+			case ResourceTypes.Ammo:
+			case ResourceTypes.Scrap:
+			case ResourceTypes.Rations:
+				player.ModifyResource (reward.getResourceValue(), reward.getResourceType());
+				break;
+			case ResourceTypes.Medicine:
+				player.ModifyHealth (reward.getResourceValue());
+				break;
+			}
+		}
+
+		for (int c = 0; c < option.costIds.Count; ++c) {
+			EventValue cost = EventsManager.getEventValue (option.costIds [c]);
+			switch (cost.getResourceType()) {
+			case ResourceTypes.Ammo:
+			case ResourceTypes.Scrap:
+			case ResourceTypes.Rations:
+				player.ModifyResource (-cost.getResourceValue(), cost.getResourceType());
+				break;
+			case ResourceTypes.Medicine:
+				// TODO: Can we _cost_ health?
+				break;
+			}
+		}
+
+		if(option.eventFlags != null) {
+			world.AddEventFlags (option.eventFlags);
+		}
+
+		switch (option.healthEffect) {
+		case HealthEffect.None:
+		case HealthEffect.TYPE_COUNT:
+			break;
+		case HealthEffect.Cured:
+			player.illness = HealthEffect.None;
+			break;
+		default:
+			if (player.illness == HealthEffect.None) {
+				// TODO: Multiple illnesses?
+				player.illness = option.healthEffect;
+			}
+			break;
+		}
+	}
+
+	public bool playerCanAffordCost(EventValue cost) {
+		return player.canAffordEventCost (cost);
+	}
+
 	public TradeEvent GetRandomTradeEvent() {
 		if (CanTrade ()) {
 			ArrayList costs = new ArrayList ();
@@ -234,14 +286,14 @@ public class GameController : MonoBehaviour
 				e.result = "You lose " + num + " ammo.";
 				player.ModifyResource (-num, ResourceTypes.Ammo);
 			}
-		} else if (e.resource == "health" && player.illness == null) {
+		} else if (e.resource == "health" && player.illness == HealthEffect.None) {
 			int num = rand.Next (1, 3);
 			if (num == 1) {
-				player.illness = "twengies";
+				player.illness = HealthEffect.Twengies;
 			} else if (num == 2) {
-				player.illness = "dysentery";
+				player.illness = HealthEffect.Dysentery;
 			} else {
-				player.illness = "loon eye";
+				player.illness = HealthEffect.LoonEye;
 			}
 			e.result = player.illness + ".";
 		} else if (e.resource == "time") {

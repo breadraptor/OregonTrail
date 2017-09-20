@@ -7,6 +7,8 @@ public class GUIManager : MonoBehaviour
 {
 	private int maxChoicesCount = 8;
 
+	public GUIEvents currentGuiState = GUIEvents.GoToMenu;
+
 	public Font mainFont;
 	public GameObject defaultText;
 	public GameObject defaultButton;
@@ -90,6 +92,8 @@ public class GUIManager : MonoBehaviour
 			Debug.Log ("UNRECOGNIZED EVENT: " + uiEvent.ToString ());
 			break;
 		}
+
+		currentGuiState = uiEvent;
 	}
 
 	private void deactivateAllDisplays ()
@@ -261,12 +265,75 @@ public class GUIManager : MonoBehaviour
 	private void displayEventMenu ()
 	{
 		updateLocationTimeDisplay (mainGameController.GetDestinationDescription ());
-		updateCurrentStatusDisplay (mainGameController.GetStatusText ());
-		updateAlertDisplay (eventText);
-		alertDisplay.SetActive (true);
-		alertAsset.SetActive (true);
-		setChoicesMenuWithOptions (eventBaseConfigs);
+		locationTimeDisplay.SetActive (true);
+
+		EventStep randomEvent = EventsManager.getRandomTravelEvent ();
+		updateEventMenuToStep (randomEvent);
+
+		//TODO : Convert those random events to the event system
+//		updateLocationTimeDisplay (mainGameController.GetDestinationDescription ());
+//		updateCurrentStatusDisplay (mainGameController.GetStatusText ());
+//		updateAlertDisplay (eventText);
+//		alertDisplay.SetActive (true);
+//		alertAsset.SetActive (true);
+//		setChoicesMenuWithOptions (eventBaseConfigs);
+//		currentStatusDisplay.SetActive (true);
+	}
+
+	private void updateEventMenuToStep(EventStep step) {
+		ArrayList optionButtonConfigs = new ArrayList ();
+
+		string displayText = step.displayText + "\n";
+		for(int o = 0; o < step.options.Count; ++o) {
+			EventOption option = EventsManager.getEventOption (step.options [o]);
+			if (option.rewardIds.Count + option.costIds.Count > 0) {
+				displayText += option.buttonText + ":\n";
+			}
+			if (option.rewardIds.Count > 0) {
+				displayText += " Rewards\n";
+				for (int r = 0; r < option.rewardIds.Count; ++r) {
+					EventValue reward = EventsManager.getEventValue (option.rewardIds [r]);
+					displayText += "   " + reward.getResourceType().toUpperString() + ": " + reward.getResourceValue() + "\n";
+				}
+			}
+			bool canAfford = true;
+			if (option.costIds.Count > 0) {
+				displayText += " Costs\n";
+				for (int c = 0; c < option.costIds.Count; ++c) {
+					EventValue cost = EventsManager.getEventValue (option.costIds [c]);
+					canAfford &= mainGameController.playerCanAffordCost (cost);
+					displayText += "   " + cost.getResourceType().toUpperString () + ": " + cost.getResourceValue() + "\n";
+				}
+			}
+
+			string buttonText;
+			if (canAfford) {
+				buttonText = option.buttonText;
+			} else {
+				buttonText = option.cantAffordButtonText;
+			}
+
+			ButtonConfig optionButtonConfig = new ButtonConfig (
+				buttonText,
+				delegate {
+					mainGameController.ResolveEventOption (option);
+					if(option.nextStepId != null && option.nextStepId != "") {
+						EventStep nextStep = EventsManager.getEvent (option.nextStepId);
+						updateEventMenuToStep (nextStep);
+					} else {
+						configureUIWithEvent(GUIEvents.GoToMenu);
+					}
+				}
+			);
+
+			optionButtonConfigs.Add (optionButtonConfig);
+		}
+
+		updateCurrentStatusDisplay (displayText);
 		currentStatusDisplay.SetActive (true);
+
+		setChoicesMenuWithOptions (optionButtonConfigs);
+		choicesMenu.SetActive (true);
 	}
 
 	private void displayTradeMenu()

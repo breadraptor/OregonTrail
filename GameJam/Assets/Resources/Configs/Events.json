@@ -1,0 +1,56 @@
+{
+	"randomTravelEvents": [
+		"cruddy_trade_start"
+	],
+	"randomCityEvents": [
+	],
+	"eventSteps": [{
+		"id": "cruddy_trade_start",
+		"displayText": "Trade some scrap for some ammo and rations?",
+		"options": ["ok_step_01", "no_step_01"]
+	}, {
+		"id": "cruddy_trade_end",
+		"displayText": "Thanks for trading! I wish you luck in your travels.",
+		"options": ["end_step_01"]
+	}],
+	"eventOptions": [{
+		"id": "ok_step_01",
+		"nextStepId": "cruddy_trade_end",
+		"buttonText": "Accept trade",
+		"cantAffordButtonText": "Can't afford trade",
+		"rewardIds": ["low_ration_reward", "low_ammo_reward"],
+		"costIds": ["low_ration_cost"],
+		"eventFlags": ["accepted_trade"],
+		"healthEffect": 4
+	}, {
+		"id": "no_step_01",
+		"nextStepId": "",
+		"buttonText": "No thanks",
+		"rewardIds": [],
+		"eventFlags": [],
+		"healthEffect": 0
+	}, {
+		"id": "end_step_01",
+		"nextStepId": "",
+		"buttonText": "No problem!",
+		"rewardIds": [],
+		"eventFlags": ["ended_event"],
+		"healthEffect": 0
+	}],
+	"eventValues": [{
+		"id": "low_ration_reward",
+		"type": "Rations",
+		"minValue": 3,
+		"maxValue": 15
+	}, {
+		"id": "low_ammo_reward",
+		"type": "Ammo",
+		"minValue": -12,
+		"maxValue": 34
+	}, {
+		"id": "low_ration_cost",
+		"type": "Scrap",
+		"minValue": 10,
+		"maxValue": 20
+	}]
+}

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum Weather
@@ -21,22 +23,22 @@ public enum Season
 public class WorldController
 {
 	int probabilityStep = 5;
-  public bool eventFlag = false;
-	int totalDistance;
+  	public bool eventFlag = false;
 	double eventProbability;
-	public Weather currentWeather {get; set;}
-	public Season currentSeason {get; set;}
+	public Weather currentWeather;
+	public Season currentSeason;
 	int seasonLength = 30;
 	System.Random rand = new System.Random ();
-	public int day {get; set;}
+	public int day;
+	public LinkedList<string> eventFlags;
 
-	public WorldController (int totalDistance, int startingProbability, Weather startingWeather, Season season, int day)
+	public WorldController (int startingProbability, Weather startingWeather, Season startingSeason, int startingDay)
 	{
 		eventProbability = startingProbability;
 		currentWeather = startingWeather;
-		this.totalDistance = totalDistance;
-		this.day = day;
-		currentSeason = season;
+		day = startingDay;
+		currentSeason = startingSeason;
+		eventFlags = new LinkedList<string> ();
 	}
 
 	public string toString ()
@@ -135,6 +137,14 @@ public class WorldController
 			current += 1;
 			currentSeason = (Season)(current % 4);
 			day = 0;
+		}
+	}
+
+	public void AddEventFlags(List<string> newFlags) {
+		for (int f = 0; f < newFlags.Count; ++f) {
+			if (!eventFlags.Contains (newFlags [f])) {
+				eventFlags.AddFirst (newFlags [f]);
+			}
 		}
 	}
 

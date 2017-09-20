@@ -28,11 +28,25 @@ public enum Portion {
   Plentiful = 5
 }
 
+// NOTE: !!!!!!
+// Unless you want to go fix all of the json configs,
+// Only add new items between TYPE_COUNT and the
+// previous item!!
 public enum ResourceTypes {
 	Rations,
 	Ammo,
 	Scrap,
 	Medicine,
+
+	TYPE_COUNT
+}
+
+public enum HealthEffect {
+	None,
+	Twengies,
+	Dysentery,
+	LoonEye,
+	Cured,
 
 	TYPE_COUNT
 }
@@ -45,16 +59,16 @@ public class PlayerController
 	public Hashtable resources;
 	int healthNum = 100;
 	public int distanceTravelled;
-	public string illness = null;
+	public HealthEffect illness = HealthEffect.None;
 	private bool gimme;
 	System.Random rand = new System.Random();
 
   private int daysSick = 0;
 
 	// Use this for initialization
-	public PlayerController (Pace pace, Portion portion, int rations, int ammo, int scrap)
+	public PlayerController (Pace startingPace, Portion portion, int rations, int ammo, int scrap)
 	{
-		this.pace = pace;
+		pace = startingPace;
 		currentHealth = Health.Good;
 		resources = new Hashtable ();
 		resources.Add (ResourceTypes.Rations, rations);
@@ -63,6 +77,7 @@ public class PlayerController
 		resources.Add (ResourceTypes.Medicine, 0);
 		currentPortion = portion;
 		distanceTravelled = 0;
+		healthNum = 100;
 	}
 
 
@@ -204,17 +219,17 @@ public class PlayerController
 			break;
 		}
 
-		if (illness != null) {
+		if (illness != HealthEffect.None) {
 			daysSick++;
 			int num = rand.Next (1, 100);
 			if (healthScore >= 4 && daysSick >= 3 && num >= 20) {
 				// cured for good behavior
-				illness = null;
+				illness = HealthEffect.None;
 				gimme = true;
 				daysSick = 0;
 			} else if ((healthScore < 4 && num >= 80) || (daysSick >= 10)) {
 				// cured, but you got lucky (or you were sick for long enough)
-				illness = null;
+				illness = HealthEffect.None;
 				daysSick = 0;
 				gimme = true;
 				healthScore -= 2;
@@ -232,10 +247,14 @@ public class PlayerController
 		}
 		ModifyHealth (healthScore);
 	}
+
+	public bool canAffordEventCost(EventValue cost) {
+		return (int)resources [cost.getResourceType()] >= cost.getResourceValue();
+	}
 }
 
 static class EnumHelpers {
-	public static string ToString(this ResourceTypes type) {
+	public static string toString(this ResourceTypes type) {
 		switch (type) {
 		case ResourceTypes.Rations:
 			return "rations";
@@ -250,8 +269,36 @@ static class EnumHelpers {
 		}
 	}
 
-	public static string ToUpperString(this ResourceTypes type) {
-		string lowerString = type.ToString ();
-		return lowerString [0].ToString ().ToUpper() + lowerString.Substring (1);
+	public static string toString(this HealthEffect type) {
+		switch (type) {
+		case HealthEffect.None:
+			return "none";
+		case HealthEffect.Twengies:
+			return "twengies";
+		case HealthEffect.Dysentery:
+			return "dysentery";
+		case HealthEffect.LoonEye:
+			return "loon eye";
+		default:
+			return "UNKNOWN";
+		}
 	}
+
+	private static string makeCapitalized(string source) {
+		string[] words = source.Split (' ');
+		string upperString = "";
+		for (int i = 0; i < words.Length; ++i) {
+			upperString += words [i] [0].ToString ().ToUpper () + words [i].Substring (1) + " ";
+		}
+		return upperString.Trim ();
+	}
+
+	public static string toUpperString(this ResourceTypes type) {
+		return makeCapitalized (type.toString ());
+	}
+
+	public static string toUpperString(this HealthEffect type) {
+		return makeCapitalized (type.toString ());
+	}
+
 }
