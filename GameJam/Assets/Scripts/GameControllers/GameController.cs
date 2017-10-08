@@ -11,7 +11,6 @@ public class GameController : MonoBehaviour
 	const double RESTING_UPDATE_INTERVAL = 0.5;//1.5;
 
 	System.Random rand = new System.Random ();
-	private WorldEvent[] worldEvents = new WorldEvent[10];
 
 	private PlayerController player;
 	private WorldController world;
@@ -33,7 +32,6 @@ public class GameController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		populateEvents ();
 		frontEnd = GameObject.FindGameObjectWithTag ("FrontEndManager").GetComponent<FrontEndManager> ();
 		guiMgr = GameObject.FindGameObjectWithTag ("UIManager").GetComponent<GUIManager> ();
 
@@ -85,8 +83,6 @@ public class GameController : MonoBehaviour
 					if (world.eventFlag) {
 						guiMgr.eventText = "";
 						StopWorldCoroutine ();
-						//string text = CreateEvent();
-						guiMgr.eventText = CreateEvent ();
 						guiMgr.configureUIWithEvent (GUIEvents.WorldEvent);
 						world.eventFlag = false;
 					}
@@ -260,65 +256,6 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	private string CreateEvent ()
-	{
-		//todo should put events in a text file and read that in probably
-		int eventIndex = rand.Next (0, 9);
-		WorldEvent e = worldEvents [eventIndex];
-		if (e.resource == "any") {
-			// todo make this able to affect more than one resource
-			int num = rand.Next (1, 2);
-			if (num == 1) {
-				e.resource = "rations";
-			} else {
-				e.resource = "scrap";
-			}  
-		}
-		if (e.resource == "rations") {
-			int num = rand.Next (3, 10);
-			if (e.good) {
-				e.result = "You gain " + num + " rations.";
-				player.ModifyResource (num, ResourceTypes.Rations);
-			} else {
-				e.result = "You lose " + num + " rations.";
-				player.ModifyResource (-num, ResourceTypes.Rations);
-			}
-		} else if (e.resource == "scrap") {
-			int num = rand.Next (5, 15);
-			if (e.good) {
-				e.result = "You gain " + num + " scrap.";
-				player.ModifyResource (num, ResourceTypes.Scrap);
-			} else {
-				e.result = "You lose " + num + " scrap.";
-				player.ModifyResource (-num, ResourceTypes.Scrap);
-			}
-		} else if (e.resource == "ammo") {
-			int num = rand.Next (10, 30);
-			if (e.good) {
-				e.result = "You gain " + num + " ammo.";
-				player.ModifyResource (num, ResourceTypes.Ammo);
-			} else {
-				e.result = "You lose " + num + " ammo.";
-				player.ModifyResource (-num, ResourceTypes.Ammo);
-			}
-		} else if (e.resource == "health" && player.illness == HealthEffect.None) {
-			int num = rand.Next (1, 3);
-			if (num == 1) {
-				player.illness = HealthEffect.Twengies;
-			} else if (num == 2) {
-				player.illness = HealthEffect.Dysentery;
-			} else {
-				player.illness = HealthEffect.LoonEye;
-			}
-			e.result = player.illness + ".";
-		} else if (e.resource == "time") {
-			int num = rand.Next (1, 5);
-			e.result = "You lose " + num + " day(s).";
-			world.day += num;
-		}
-		return e.description + " " + e.result;
-	}
-
 	public string GetStatusText ()
 	{
 		string fmtString = @"Date: {0}
@@ -421,36 +358,6 @@ Miles Travelled: {3} miles";
 		player.Update ();
 		world.Update ();
 		frontEnd.AssetUpdate ();
-	}
-
-	void populateEvents ()
-	{
-		worldEvents [0] = new WorldEvent ("You get lost.", "time", false);
-		worldEvents [1] = new WorldEvent ("Find a small ration cache.", "rations", true);
-		worldEvents [2] = new WorldEvent ("You have the ", "health", false);
-		worldEvents [3] = new WorldEvent ("You find an abandoned car.", "any", true);
-		worldEvents [4] = new WorldEvent ("Someone stole from your camp.", "any", false);
-		worldEvents [5] = new WorldEvent ("A traveller gave you some extra batteries.", "ammo", true);
-		worldEvents [6] = new WorldEvent ("Your backpack ripped.", "any", false);
-		worldEvents [7] = new WorldEvent ("Rough terrain.", "time", false);
-		worldEvents [8] = new WorldEvent ("You find an abandoned camp.", "any", true);
-		worldEvents [9] = new WorldEvent ("Some food spoiled.", "rations", false);
-	}
-}
-
-class WorldEvent
-{
-
-	public string description;
-	public string resource;
-	public bool good;
-	public string result;
-
-	public WorldEvent (string description, string resource, bool good)
-	{
-		this.description = description;
-		this.resource = resource; 
-		this.good = good; //true is good, false is bad
 	}
 }
 
