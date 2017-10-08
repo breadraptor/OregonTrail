@@ -1,17 +1,86 @@
 {
 	"randomTravelEvents": [
-		"cruddy_trade_start"
+		"catch_disease_twengies",
+		"catch_disease_dysentery",
+		"catch_disease_looneye",
+		"wandering_doctor",
+		"get_lost",
+		"ration_cache_low",
+		"abandoned_car_low",
+		"loss_to_thief_low",
+		"traveller_gift_low",
+		"ripped_pack",
+		"rough_terrain_low",
+		"abandoned_camp_low",
+		"abandoned_camp_mid",
+		"spoiled_food"
 	],
 	"randomCityEvents": [
 	],
 	"eventSteps": [{
 		"id": "cruddy_trade_start",
 		"displayText": "Trade some scrap for some ammo and rations?",
-		"options": ["ok_step_01", "no_step_01"]
+		"options": ["ok_step_01", "no_step"]
 	}, {
 		"id": "cruddy_trade_end",
 		"displayText": "Thanks for trading! I wish you luck in your travels.",
 		"options": ["end_step_01"]
+	}, {
+		"id": "catch_disease_twengies",
+		"displayText": "A rat scurries out of a crevice and bites you, you catch the twengies.",
+		"options": ["catch_twengies_step"]
+	}, {
+		"id": "catch_disease_dysentery",
+		"displayText": "You eat some tainted food, and catch dysentery.",
+		"options": ["catch_dysentery_step"]
+	}, {
+		"id": "catch_disease_looneye",
+		"displayText": "You accidentally rub some stray gunk into your eye and catch loon eye.",
+		"options": ["catch_looneye_step"]
+	}, {
+		"id": "wandering_doctor",
+		"displayText": "You meet a wandering doctor. He offers to cure your diseases or patch you up.",
+		"options": ["buy_cure_disease_step", "buy_healing_step", "no_step"]
+	}, {
+		"id": "get_lost",
+		"displayText": "You lose your way.",
+		"options": ["lose_mid_time_step"]
+	}, {
+		"id": "ration_cache_low",
+		"displayText": "You stumble upon a small, hidden cache of rations.",
+		"options": ["loot_low_rations"]
+	}, {
+		"id": "abandoned_car_low",
+		"displayText": "You find an abandoned car with some supplies inside.",
+		"options": ["loot_low_basics"]
+	}, {
+		"id": "loss_to_thief_low",
+		"displayText": "You wake in the morning to find someone has stolen some of your food in the night.",
+		"options": ["lose_mid_rations"]
+	}, {
+		"id": "traveller_gift_low",
+		"displayText": "You encounter a friendly traveller. They leave you with some supplies.",
+		"options": ["gift_low_basics"]
+	}, {
+		"id": "ripped_pack",
+		"displayText": "You pack rips, some resources are lost",
+		"options": ["lose_low_basic"]
+	}, {
+		"id": "rough_terrain_low",
+		"displayText": "You encounter rough terrain, and lose some time.",
+		"options": ["lose_low_time_step"]
+	}, {
+		"id": "abandoned_camp_low",
+		"displayText": "You find an abandoned camp with few supplies left behind.",
+		"options": ["loot_low_basics"]
+	}, {
+		"id": "abandoned_camp_mid",
+		"displayText": "You find an abandoned camp with some supplies left behind.",
+		"options": ["loot_mid_basics"]
+	}, {
+		"id": "spoiled_food",
+		"displayText": "You find some of your food has spoiled.",
+		"options": ["lose_mid_rations"]
 	}],
 	"eventOptions": [{
 		"id": "ok_step_01",
@@ -21,21 +90,76 @@
 		"rewardIds": ["low_ration_reward", "low_ammo_reward"],
 		"costIds": ["low_ration_cost"],
 		"eventFlags": ["accepted_trade"],
-		"healthEffect": 4
+		"healthEffect": "Cured"
 	}, {
-		"id": "no_step_01",
-		"nextStepId": "",
-		"buttonText": "No thanks",
-		"rewardIds": [],
-		"eventFlags": [],
-		"healthEffect": 0
+		"id": "no_step",
+		"buttonText": "No thanks."
 	}, {
 		"id": "end_step_01",
-		"nextStepId": "",
 		"buttonText": "No problem!",
-		"rewardIds": [],
-		"eventFlags": ["ended_event"],
-		"healthEffect": 0
+		"eventFlags": ["ended_event"]
+	}, {
+		"id": "catch_twengies_step",
+		"buttonText": "Oh no!",
+		"healthEffect": "Twengies"
+	}, {
+		"id": "catch_dysentery_step",
+		"buttonText": "Crap!",
+		"healthEffect": "Dysentery"
+	}, {
+		"id": "catch_looneye_step",
+		"buttonText": "Dang it!",
+		"healthEffect": "LoonEye"
+	}, {
+		"id": "buy_cure_disease_step",
+		"buttonText": "Cure diseases.",
+		"costIds": ["buy_cure_disease_cost"],
+		"healthEffect": "Cured"
+	}, {
+		"id": "buy_healing_step",
+		"buttonText": "Patch me up.",
+		"rewardIds": ["low_healing"],
+		"costIds": ["low_buy_healing"]
+	}, {
+		"id": "lose_low_time_step",
+		"buttonText": "Ok.",
+		"costIds": ["low_time"]
+	}, {
+		"id": "lose_mid_time_step",
+		"buttonText": "Ok.",
+		"costIds": ["mid_time"]
+	}, {
+		"id": "loot_low_rations",
+		"buttonText": "Loot.",
+		"rewardIds": ["low_ration_reward"]
+	}, {
+		"id": "loot_low_basics",
+		"buttonText": "Loot.",
+		"rewardIds": ["low_basic_reward"]
+	}, {
+		"id": "loot_mid_basics",
+		"buttonText": "Loot.",
+		"rewardIds": ["mid_basic_reward"]
+	}, {
+		"id": "gift_low_basics",
+		"buttonText": "Thanks!",
+		"rewardIds": ["low_basic_reward", "low_basic_reward"]
+	}, {
+		"id": "lose_low_basic",
+		"buttonText": "Oh no!",
+		"costIds": ["low_basic_cost"]
+	}, {
+		"id": "lose_mid_basic",
+		"buttonText": "Oh no!",
+		"costIds": ["mid_basic_cost"]
+	}, {
+		"id": "lose_low_rations",
+		"buttonText": "Crud.",
+		"costIds": ["low_ration_cost"]
+	}, {
+		"id": "lose_mid_rations",
+		"buttonText": "Crud.",
+		"costIds": ["mid_ration_cost"]
 	}],
 	"eventValues": [{
 		"id": "low_ration_reward",
@@ -45,12 +169,77 @@
 	}, {
 		"id": "low_ammo_reward",
 		"type": "Ammo",
-		"minValue": -12,
-		"maxValue": 34
+		"minValue": 10,
+		"maxValue": 25
+	}, {
+		"id": "low_basic_reward",
+		"type": "Basic",
+		"minValue": 5,
+		"maxValue": 18
+	}, {
+		"id": "mid_basic_reward",
+		"type": "Basic",
+		"minValue": 12,
+		"maxValue": 26
 	}, {
 		"id": "low_ration_cost",
-		"type": "Scrap",
+		"type": "Rations",
 		"minValue": 10,
 		"maxValue": 20
+	}, {
+		"id": "mid_ration_cost",
+		"type": "Rations",
+		"minValue": 15,
+		"maxValue": 30
+	}, {
+		"id": "low_basic_cost",
+		"type": "Basic",
+		"minValue": 10,
+		"maxValue": 20
+	}, {
+		"id": "mid_basic_cost",
+		"type": "Basic",
+		"minValue": 15,
+		"maxValue": 30
+	}, {
+		"id": "buy_cure_disease_cost",
+		"type": "Scrap",
+		"minValue": 15,
+		"maxValue": 30
+	}, {
+		"id": "low_healing",
+		"type": "Medicine",
+		"minValue": 10,
+		"maxValue": 25
+	}, {
+		"id": "mid_healing",
+		"type": "Medicine",
+		"minValue": 20,
+		"maxValue": 50
+	}, {
+		"id": "high_healing",
+		"type": "Medicine",
+		"minValue": 40,
+		"maxValue": 70
+	}, {
+		"id": "low_buy_healing",
+		"type": "Scrap",
+		"minValue": 15,
+		"maxValue": 30
+	}, {
+		"id": "low_time",
+		"type": "Time",
+		"minValue": 1,
+		"maxValue": 4
+	}, {
+		"id": "mid_time",
+		"type": "Time",
+		"minValue": 3,
+		"maxValue": 7
+	}, {
+		"id": "high_time",
+		"type": "Time",
+		"minValue": 6,
+		"maxValue": 10
 	}]
 }

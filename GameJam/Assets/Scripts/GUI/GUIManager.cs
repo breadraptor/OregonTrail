@@ -269,15 +269,6 @@ public class GUIManager : MonoBehaviour
 
 		EventStep randomEvent = EventsManager.getRandomTravelEvent ();
 		updateEventMenuToStep (randomEvent);
-
-		//TODO : Convert those random events to the event system
-//		updateLocationTimeDisplay (mainGameController.GetDestinationDescription ());
-//		updateCurrentStatusDisplay (mainGameController.GetStatusText ());
-//		updateAlertDisplay (eventText);
-//		alertDisplay.SetActive (true);
-//		alertAsset.SetActive (true);
-//		setChoicesMenuWithOptions (eventBaseConfigs);
-//		currentStatusDisplay.SetActive (true);
 	}
 
 	private void updateEventMenuToStep(EventStep step) {
@@ -285,9 +276,10 @@ public class GUIManager : MonoBehaviour
 
 		string displayText = step.displayText + "\n";
 		for(int o = 0; o < step.options.Count; ++o) {
+			int index = o + 1;
 			EventOption option = EventsManager.getEventOption (step.options [o]);
 			if (option.rewardIds.Count + option.costIds.Count > 0) {
-				displayText += option.buttonText + ":\n";
+				displayText += "Option " + index + ":\n";
 			}
 			if (option.rewardIds.Count > 0) {
 				displayText += " Rewards\n";
@@ -314,7 +306,7 @@ public class GUIManager : MonoBehaviour
 			}
 
 			ButtonConfig optionButtonConfig = new ButtonConfig (
-				buttonText,
+				index + ") " + buttonText,
 				delegate {
 					mainGameController.ResolveEventOption (option);
 					if(option.nextStepId != null && option.nextStepId != "" && canAfford) {

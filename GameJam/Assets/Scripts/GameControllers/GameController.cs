@@ -47,7 +47,7 @@ public class GameController : MonoBehaviour
 		player = new PlayerController (
 			Pace.Normal,
 			Portion.Normal,
-			30,
+			80,
 			5,
 			25
 		);
@@ -170,6 +170,9 @@ public class GameController : MonoBehaviour
 			case ResourceTypes.Medicine:
 				player.ModifyHealth (reward.resourceValue);
 				break;
+			case ResourceTypes.Time:
+				Debug.Log ("ERROR! Cannot Reward Time!");
+				break;
 			}
 		}
 
@@ -184,6 +187,11 @@ public class GameController : MonoBehaviour
 			case ResourceTypes.Medicine:
 				// TODO: Can we _cost_ health?
 				break;
+			case ResourceTypes.Time:
+				for (int i = 0; i < cost.resourceValue; ++i) {
+					UpdateWorldAndPlayer ();
+				}
+				break;
 			}
 		}
 
@@ -191,7 +199,7 @@ public class GameController : MonoBehaviour
 			world.AddEventFlags (option.eventFlags);
 		}
 
-		switch (option.healthEffect) {
+		switch (option.diseaseEffect) {
 		case HealthEffect.None:
 		case HealthEffect.TYPE_COUNT:
 			break;
@@ -201,14 +209,21 @@ public class GameController : MonoBehaviour
 		default:
 			if (player.illness == HealthEffect.None) {
 				// TODO: Multiple illnesses?
-				player.illness = option.healthEffect;
+				player.illness = option.diseaseEffect;
 			}
 			break;
 		}
 	}
 
 	public bool playerCanAffordCost(EventValue cost) {
-		return player.canAffordEventCost (cost);
+		switch (cost.resourceType) {
+		case ResourceTypes.Rations:
+		case ResourceTypes.Ammo:
+		case ResourceTypes.Scrap:
+			return player.canAffordEventCost (cost);
+		default:
+			return true; // This covers cases like "costing" time
+		}
 	}
 
 	public TradeEvent GetRandomTradeEvent() {
@@ -394,15 +409,15 @@ Miles Travelled: {3} miles";
 	{
 
 		guiMgr.updateCurrentStatusDisplay (GetStatusText ());
-		print (string.Format (@"
------ Player -----
-    {0}
------ World -----
-    {1}
-    ",
-			player.toString (),
-			world.toString ()
-		));
+//		print (string.Format (@"
+//----- Player -----
+//    {0}
+//----- World -----
+//    {1}
+//    ",
+//			player.toString (),
+//			world.toString ()
+//		));
 		player.Update ();
 		world.Update ();
 		frontEnd.AssetUpdate ();

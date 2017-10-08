@@ -37,16 +37,18 @@ public enum ResourceTypes {
 	Ammo,
 	Scrap,
 	Medicine,
+	Time,
 
+	Basic, // Basic is used for rewards / costs. Can yield rations, ammo, or scrap
 	TYPE_COUNT
 }
 
 public enum HealthEffect {
 	None,
+	Cured,
 	Twengies,
 	Dysentery,
 	LoonEye,
-	Cured,
 
 	TYPE_COUNT
 }
@@ -264,6 +266,8 @@ static class EnumHelpers {
 			return "scrap";
 		case ResourceTypes.Medicine:
 			return "medicine";
+		case ResourceTypes.Time:
+			return "days";
 		default:
 			return "UNKNOWN";
 		}

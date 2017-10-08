@@ -6,10 +6,15 @@ using UnityEngine;
 public static class EventsManager {
 
 	private static EventConfig eventConfig;
+	public static ArrayList basicResourceTypes;
 
 	static EventsManager() {
 		TextAsset eventConfigAsset = (TextAsset)Resources.Load ("Configs/Events");
 		eventConfig = JsonUtility.FromJson<EventConfig> (eventConfigAsset.text);
+		basicResourceTypes = new ArrayList ();
+		basicResourceTypes.Add (ResourceTypes.Rations);
+		basicResourceTypes.Add (ResourceTypes.Ammo);
+		basicResourceTypes.Add (ResourceTypes.Scrap);
 	}
 
 	public static EventStep getRandomTravelEvent() {
@@ -70,14 +75,27 @@ public class EventStep {
 
 [Serializable]
 public class EventOption {
-	public string id;
-	public string nextStepId;
-	public string buttonText;
-	public string cantAffordButtonText;
-	public List<string> rewardIds;
-	public List<string> costIds;
-	public List<string> eventFlags;
-	public HealthEffect healthEffect;
+	public string id = "";
+	public string nextStepId = "";
+	public string buttonText = "";
+	public string cantAffordButtonText = "";
+	public List<string> rewardIds = new List<string>();
+	public List<string> costIds = new List<string>();
+	public List<string> eventFlags = new List<string>();
+	[SerializeField]
+	private string healthEffect = "";
+
+	private HealthEffect _diseaseEffect = HealthEffect.TYPE_COUNT;
+	public HealthEffect diseaseEffect {
+		get {
+			if (healthEffect == null || healthEffect == "") {
+				_diseaseEffect = HealthEffect.None;
+			} else if (_diseaseEffect == HealthEffect.TYPE_COUNT) {
+				_diseaseEffect = (HealthEffect)Enum.Parse (typeof(HealthEffect), healthEffect);
+			}
+			return _diseaseEffect;
+		}
+	}
 }
 
 [Serializable]
@@ -95,6 +113,10 @@ public class EventValue {
 		get {
 			if (_resourceType == ResourceTypes.TYPE_COUNT) {
 				_resourceType = (ResourceTypes)Enum.Parse (typeof(ResourceTypes), type);
+				if (_resourceType == ResourceTypes.Basic) {
+					int randomBasicIndex = UnityEngine.Random.Range (0, EventsManager.basicResourceTypes.Count);
+					_resourceType = (ResourceTypes)EventsManager.basicResourceTypes[randomBasicIndex];
+				}
 			}
 			return _resourceType;
 		}
