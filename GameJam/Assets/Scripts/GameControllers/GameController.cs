@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour
 	Coroutine worldCoroutine;
 	FrontEndManager frontEnd;
 	GUIManager guiMgr;
+    public GameObject mapObj;
 	double updateInterval;
 
 	bool shouldUpdate;
@@ -34,8 +35,9 @@ public class GameController : MonoBehaviour
 	{
 		frontEnd = GameObject.FindGameObjectWithTag ("FrontEndManager").GetComponent<FrontEndManager> ();
 		guiMgr = GameObject.FindGameObjectWithTag ("UIManager").GetComponent<GUIManager> ();
-
-		StartNewGame ();
+        //mapObj = frontEnd.canvas.transform.Find("Map").gameObject;
+        //frontEnd.canvas.transform.Find("Map").gameObject.SetActive(false);
+        StartNewGame ();
 	}
 
 	public void StartNewGame() {
@@ -139,7 +141,20 @@ public class GameController : MonoBehaviour
     	shouldUpdate = false;
 	}
 
-	public void ResolveTradeEvent(TradeEvent trade) {
+    public void HideMap () 
+    {
+        if (mapObj != null) {
+            mapObj.SetActive(false);
+        }
+        
+        //frontEnd.canvas.transform.Find("Map").gameObject.GetComponent<Renderer>().enabled = true;
+
+    }
+    public void ShowMap() {
+        mapObj.SetActive(true);
+        //frontEnd.canvas.transform.Find("Map").gameObject.GetComponent<Renderer>().enabled = true;
+    }
+    public void ResolveTradeEvent(TradeEvent trade) {
 		switch (trade.rewardType) {
 		case ResourceTypes.Ammo:
 		case ResourceTypes.Scrap:

@@ -11,6 +11,7 @@ public enum GUIEvents {
 	ChangeRations,
 	StopToRest,
 	HaveRandomConversation,
+    GoToMap,
  	WorldEvent,
 	PlayerDeath,
 	DoTrade

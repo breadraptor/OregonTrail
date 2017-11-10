@@ -30,7 +30,8 @@ public class GUIManager : MonoBehaviour
 	private ButtonConfig continueJourneyButtonConfig;
 	private ButtonConfig setOutButtonConfig;
 	private ButtonConfig checkSuppliesButtonConfig;
-	private ButtonConfig setPaceButtonConfig;
+    private ButtonConfig goToMapButtonConfig;
+    private ButtonConfig setPaceButtonConfig;
 	private ButtonConfig setPortionsButtonConfig;
 	private ButtonConfig restButtonConfig;
 	private ButtonConfig talkToPeopleButtonConfig;
@@ -88,6 +89,9 @@ public class GUIManager : MonoBehaviour
 		case GUIEvents.HaveRandomConversation:
 			displayTextBlurb ();
 			break;
+        case GUIEvents.GoToMap:
+            displayMap();
+            break;
 		default:
 			Debug.Log ("UNRECOGNIZED EVENT: " + uiEvent.ToString ());
 			break;
@@ -125,7 +129,9 @@ public class GUIManager : MonoBehaviour
 
 		mainMenuConfigs.Add (checkSuppliesButtonConfig);
 
-		if (!mainGameController.AtFinalDestination ()) {
+        mainMenuConfigs.Add(goToMapButtonConfig);
+
+        if (!mainGameController.AtFinalDestination ()) {
 			mainMenuConfigs.Add (setPaceButtonConfig);
 			mainMenuConfigs.Add (setPortionsButtonConfig);
 			mainMenuConfigs.Add (restButtonConfig);
@@ -138,8 +144,8 @@ public class GUIManager : MonoBehaviour
 	{
 		updateLocationTimeDisplay (mainGameController.GetDestinationDescription ());
 		locationTimeDisplay.SetActive (true);
-
-		if (mainGameController.AtCurrentDestination ()) {
+        mainGameController.HideMap();
+        if (mainGameController.AtCurrentDestination ()) {
 			updateCurrentStatusDisplay (mainGameController.GetLocationDescription ());
 		} else {
 			updateCurrentStatusDisplay (mainGameController.GetStatusText ());
@@ -238,7 +244,15 @@ public class GUIManager : MonoBehaviour
 		setChoicesMenuWithOptions (buttonConfigs);
 	}
 
-	private void displayPaceMenu ()
+    private void displayMap() 
+    {
+        mainGameController.ShowMap();
+        ArrayList buttonConfigs = new ArrayList();
+        buttonConfigs.Add(backButtonConfig);
+        setChoicesMenuWithOptions(buttonConfigs);
+    }
+
+    private void displayPaceMenu ()
 	{
 		updateCurrentStatusDisplay ("What travel pace would you like to set?...");
 		currentStatusDisplay.SetActive (true);
@@ -512,8 +526,11 @@ public class GUIManager : MonoBehaviour
 			"Trade with somebody",
 			delegate { configureUIWithEvent(GUIEvents.DoTrade); }
 		);
-
-		checkScoreButtonConfig = new ButtonConfig (
+        goToMapButtonConfig = new ButtonConfig(
+            "Check map",
+            delegate { configureUIWithEvent(GUIEvents.GoToMap); }
+        );
+        checkScoreButtonConfig = new ButtonConfig (
 			"Final score",
 			delegate { displayGameOverMenu(); }
 		);
